@@ -1,17 +1,36 @@
-# Gemini Review Templates
+# Gemini Review Templates (TypeScript)
 
-## MCP Tools
+## MCP Tools (gemini-mcp)
 
-- `gemini-review-file`: Single file review
-- `gemini-review-files`: Multi-file review with context
-- `gemini-query`: General queries
+### gemini-analyze-code
+
+Best for code review with specific focus.
+
+```
+Tool: mcp__gemini__gemini-analyze-code
+Params:
+  code: <code-content>
+  language: "typescript"
+  focus: "quality" | "security" | "performance" | "bugs" | "general"
+```
+
+### gemini-query
+
+Best for custom review prompts with full context.
+
+```
+Tool: mcp__gemini__gemini-query
+Params:
+  model: "pro"
+  prompt: <custom-prompt-with-code>
+```
 
 ---
 
 ## Standard Review Prompt
 
 ```
-Review this implementation with an extremely critical and meticulous attitude.
+Review this TypeScript implementation with an extremely critical and meticulous attitude.
 
 Evaluate against:
 - Feature-based Architecture compliance
@@ -23,13 +42,25 @@ Evaluate against:
 - Performance considerations
 
 Identify ALL concerns, no matter how minor.
+
+Format response as:
+## Summary
+[APPROVED / NEEDS_REVISION / ESCALATE]
+
+## Concerns
+- [Critical] ...
+- [Major] ...
+- [Minor] ...
+
+## Recommendations
+1. ...
 ```
 
 ---
 
 ## Phase-Specific Templates
 
-### Phase 1: Analysis Review
+### Analysis Review
 
 ```
 Analyze this codebase investigation.
@@ -46,7 +77,7 @@ Provide:
 3. Recommendations for implementation
 ```
 
-### Phase 2: Design Review
+### Design Review
 
 ```
 Review this design with an extremely critical attitude.
@@ -64,7 +95,7 @@ Identify:
 3. Potential extensibility issues
 ```
 
-### Phase 3: Implementation Review
+### Implementation Review
 
 ```
 Review this implementation with an extremely critical and meticulous attitude.
@@ -79,7 +110,6 @@ Evaluate against:
 - Performance (memo, callback, lazy loading)
 - TDD compliance (tests exist and pass)
 
-Identify ALL concerns, no matter how minor.
 Format: List each concern with severity (Critical/Major/Minor).
 ```
 
@@ -138,102 +168,40 @@ Identify:
 3. Implementation details testing (anti-pattern)
 ```
 
----
-
-## Response Format Request
-
-Add this to get structured responses:
+### Security Review
 
 ```
-Format your response as:
+Review this code for security vulnerabilities.
 
-## Summary
-[One-line assessment: APPROVED / NEEDS_REVISION]
+Check for:
+- XSS vulnerabilities
+- CSRF protection
+- Input validation
+- Sensitive data exposure
+- Authentication/authorization issues
+- Dependency vulnerabilities
 
-## Concerns
-- [Critical] ...
-- [Major] ...
-- [Minor] ...
-
-## Recommendations
-1. ...
-2. ...
+Flag any security concern as Critical.
 ```
 
 ---
 
 ## Review Validation
 
-After receiving Gemini's review, validate the review itself.
-
-### Validation Prompt
+When Gemini feedback seems incorrect:
 
 ```
-Evaluate the validity of the following code review.
+Evaluate the validity of this code review.
 
-## Code Under Review
-[Paste the code]
+For each concern, check:
+1. Accuracy: Does the issue actually exist?
+2. Relevance: Appropriate for this project scope?
+3. Severity: Correctly rated?
 
-## Review Result
-[Paste Gemini's review]
-
-## Validation Criteria
-
-For each concern raised, evaluate:
-
-1. **Accuracy**: Is the concern technically correct?
-   - Does the issue actually exist in the code?
-   - Is the technical reasoning sound?
-
-2. **Relevance**: Is the concern relevant to this context?
-   - Does it apply to the actual requirements?
-   - Is it appropriate for the project scope?
-
-3. **Severity**: Is the severity rating appropriate?
-   - Critical: Would cause runtime errors or security issues
-   - Major: Violates architecture/patterns, hard to fix later
-   - Minor: Style, optimization, nice-to-have
-
-4. **Missed Issues**: Are there concerns NOT raised that should be?
-   - Accessibility violations
-   - Type safety issues
-   - Performance problems
-
-## Response Format
-
-For each concern:
-- [VALID] Concern is accurate and appropriately rated
-- [INVALID] Concern is incorrect or irrelevant - explain why
-- [SEVERITY_ADJUST] Correct concern but wrong severity - suggest new level
-
-Missed issues (if any):
-- [MISSED] Description of overlooked concern
-
-Final verdict:
-- REVIEW_ACCEPTED: Review is valid, proceed with fixes
-- REVIEW_ADJUSTED: Some concerns invalid/adjusted, use corrected list
-- REVIEW_REJECTED: Review has fundamental errors, re-review needed
-```
-
-### When to Validate
-
-- **Always validate** Critical concerns before acting
-- **Validate** when concerns seem overly strict or incorrect
-- **Skip validation** for Minor concerns (optional fixes)
-
-### Validation Flow
-
-```mermaid
-graph TD
-    A[Gemini Review] --> B{Critical/Major<br/>concerns?}
-    B -->|Yes| C[Run Validation Prompt]
-    C --> D[REVIEW_ACCEPTED]
-    C --> E[REVIEW_ADJUSTED]
-    C --> F[REVIEW_REJECTED]
-    D --> G[Fix all concerns]
-    E --> H[Fix valid concerns only]
-    F --> I[Request new review]
-    B -->|Only Minor| J[Apply at discretion]
+Verdict:
+- REVIEW_ACCEPTED: Proceed with all fixes
+- REVIEW_ADJUSTED: Apply corrected concern list
+- REVIEW_REJECTED: Re-review needed
 ```
 
 ---
