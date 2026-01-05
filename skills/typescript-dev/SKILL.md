@@ -25,14 +25,16 @@ description: |
 
 | Directory | Description |
 |-----------|-------------|
-| `workflow/` | Workflow details, prompt templates, git workflow |
-| `guides/` | Coding standards, architecture, testing, documentation |
-| `examples/` | Step-by-step implementation examples |
-| `templates/` | Code templates (components, hooks, stores, forms, animations) |
-| `scripts/` | Validation scripts |
-| `checklists/` | Phase checklists |
+| workflow/ | Workflow details, prompt templates, git workflow |
+| guides/ | Coding standards, architecture, testing, documentation |
+| examples/ | Step-by-step implementation examples |
+| templates/ | Code templates (components, hooks, stores, forms, animations) |
+| scripts/ | Validation scripts |
+| checklists/ | Phase checklists |
 
-**Shared Patterns**: See `dev-workflow-core` for 3-agent workflow, iteration control, review validation.
+## Shared Patterns
+
+@~/.claude/skills/dev-workflow-core/SKILL.md
 
 ---
 
@@ -67,7 +69,8 @@ graph TD
 ### 4. Complete Resolution Principle
 
 Iterate until Gemini returns "no concerns". Never settle for partial fixes.
-See `dev-workflow-core/workflow/iteration-control.md` for loop prevention.
+
+@~/.claude/skills/dev-workflow-core/workflow/iteration-control.md
 
 ---
 
@@ -93,15 +96,11 @@ graph LR
     Phase1 --> Phase2 --> Phase3
 ```
 
-- Git: `workflow/git-workflow.md`
-- Docs: `guides/documentation.md`
-- Details: `workflow/overview.md`
-
 ---
 
 ## Coding Standards (Summary)
 
-See `guides/coding-standards.md` for details.
+@~/.claude/skills/typescript-dev/guides/coding-standards.md
 
 ### TypeScript Strict Mode
 
@@ -115,17 +114,15 @@ function getUser(id: any): any { ... }
 
 ### File Naming
 
-```
-Routes/Dirs:     kebab-case   (app/user-settings/)
-Components:      PascalCase   (UserCard.tsx)
-Hooks/Utils:     kebab-case   (use-user.ts)
-```
+- Routes/Dirs: kebab-case (app/user-settings/)
+- Components: PascalCase (UserCard.tsx)
+- Hooks/Utils: kebab-case (use-user.ts)
 
 ---
 
 ## Tech Stack
 
-See `guides/libraries.md` for detailed usage.
+@~/.claude/skills/typescript-dev/guides/libraries.md
 
 | Category | Library | Purpose |
 |----------|---------|---------|
@@ -136,8 +133,6 @@ See `guides/libraries.md` for detailed usage.
 | UI | shadcn/ui | Base components |
 | Forms | React Hook Form | Form management |
 | Animation | Framer Motion | Animations |
-| Date | date-fns | Date manipulation |
-| Toast | Sonner | Notifications |
 | Test | Vitest + Playwright | Unit + E2E |
 
 ---
@@ -159,7 +154,4 @@ npx playwright test
 
 # Build
 npm run build
-
-# Storybook
-npm run storybook
 ```

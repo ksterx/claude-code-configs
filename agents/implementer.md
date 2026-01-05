@@ -38,9 +38,9 @@ Task: [Specific request]
 ## Detailed Templates
 
 For detailed prompt templates:
-- Python: `@python-dev/workflow/codex-templates.md`
-- TypeScript: `@typescript-dev/workflow/codex-templates.md`
+- Python: @~/.claude/skills/python-dev/workflow/codex-templates.md
+- TypeScript: @~/.claude/skills/typescript-dev/workflow/codex-templates.md
 
 For code templates:
-- Python: `@python-dev/templates/`
-- TypeScript: `@typescript-dev/templates/`
+- Python: @~/.claude/skills/python-dev/templates/
+- TypeScript: @~/.claude/skills/typescript-dev/templates/

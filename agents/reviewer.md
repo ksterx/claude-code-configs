@@ -31,13 +31,14 @@ Use when code needs to be included in context with custom prompts.
 
 | Status | Action |
 |--------|--------|
-| `APPROVED` | Proceed |
-| `NEEDS_REVISION` | Return to @implementer |
-| `ESCALATE` | /escalate |
+| APPROVED | Proceed |
+| NEEDS_REVISION | Return to @implementer |
+| ESCALATE | /escalate |
 
 ## Core Principle
 
 Always use critical stance in prompts:
+
 ```
 Review with an extremely critical and meticulous attitude.
 Identify ALL concerns, no matter how minor.
@@ -46,5 +47,5 @@ Identify ALL concerns, no matter how minor.
 ## Detailed Templates
 
 For detailed review prompts and checklists:
-- Python: `@python-dev/workflow/gemini-templates.md`
-- TypeScript: `@typescript-dev/workflow/gemini-templates.md`
+- Python: @~/.claude/skills/python-dev/workflow/gemini-templates.md
+- TypeScript: @~/.claude/skills/typescript-dev/workflow/gemini-templates.md

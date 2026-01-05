@@ -46,9 +46,9 @@ graph TB
 
 ## References
 
-- `workflow/3-agent-overview.md` - Detailed workflow phases
-- `workflow/iteration-control.md` - Loop prevention protocol
-- `workflow/review-validation.md` - Review outcome handling
-- `workflow/bug-fix.md` - Bug fix specific workflow
-- `templates/human-intervention.md` - Escalation template
-- `templates/adr.md` - Architecture Decision Record
+- @~/.claude/skills/dev-workflow-core/workflow/3-agent-overview.md
+- @~/.claude/skills/dev-workflow-core/workflow/iteration-control.md
+- @~/.claude/skills/dev-workflow-core/workflow/review-validation.md
+- @~/.claude/skills/dev-workflow-core/workflow/bug-fix.md
+- @~/.claude/skills/dev-workflow-core/templates/human-intervention.md
+- @~/.claude/skills/dev-workflow-core/templates/adr.md

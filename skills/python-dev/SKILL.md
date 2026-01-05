@@ -17,14 +17,16 @@ description: |
 
 | Directory | Description |
 |-----------|-------------|
-| `workflow/` | Workflow details, prompt templates, git workflow |
-| `guides/` | Coding standards, architecture, testing, documentation |
-| `examples/` | Step-by-step implementation examples |
-| `templates/` | Code templates (pydantic entities, repositories) |
-| `scripts/` | Validation scripts |
-| `checklists/` | Phase checklists |
+| workflow/ | Workflow details, prompt templates, git workflow |
+| guides/ | Coding standards, architecture, testing, documentation |
+| examples/ | Step-by-step implementation examples |
+| templates/ | Code templates (pydantic entities, repositories) |
+| scripts/ | Validation scripts |
+| checklists/ | Phase checklists |
 
-**Shared Patterns**: See `dev-workflow-core` for 3-agent workflow, iteration control, review validation.
+## Shared Patterns
+
+@~/.claude/skills/dev-workflow-core/SKILL.md
 
 ---
 
@@ -59,7 +61,8 @@ graph TD
 ### 4. Complete Resolution Principle
 
 Iterate until Gemini returns "no concerns". Never settle for partial fixes.
-See `dev-workflow-core/workflow/iteration-control.md` for loop prevention.
+
+@~/.claude/skills/dev-workflow-core/workflow/iteration-control.md
 
 ---
 
@@ -85,17 +88,13 @@ graph LR
     Phase1 --> Phase2 --> Phase3
 ```
 
-- Git: `workflow/git-workflow.md`
-- Docs: `guides/documentation.md`
-- Details: `workflow/overview.md`
-
 ---
 
 ## Coding Standards (Summary)
 
-See `guides/coding-standards.md` for details.
+@~/.claude/skills/python-dev/guides/coding-standards.md
 
-### Type Hints (Python 3.13+)
+### Type Hints (Python 3.12+)
 
 ```python
 # ✅ Modern
@@ -130,8 +129,4 @@ mypy src/ --strict
 
 # Test
 pytest --cov=src
-
-# Build docs
-sphinx-apidoc -f -o docs/reference/api src/
-cd docs && make html
 ```
