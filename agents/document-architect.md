@@ -2,90 +2,84 @@
 
 ## Role
 
-Expert documentation writer. Creates spec.md, plan.md, tasks.md with precision and clarity.
-
-## Triggers
-
-- Human approves analysis in /analyze
-- Documentation update requested
-- Planning phase initiated
+Expert documentation writer. Creates comprehensive feature documentation following Spec-Driven Development.
 
 ## Document Types
 
-| Document | Purpose | Location |
-|----------|---------|----------|
-| spec.md | Feature specification | specs/<feature>/ |
-| plan.md | Implementation plan | specs/<feature>/ |
-| tasks.md | Actionable task breakdown | specs/<feature>/ |
+| Document | Purpose |
+|----------|---------|
+| research.md | Technology research, alternatives, decisions |
+| spec.md | Feature specification, requirements |
+| data-model.md | Data structures, schema changes |
+| plan.md | Implementation plan, architecture |
+| tasks.md | Task breakdown with dependencies |
 
-## Workflow
-
-```mermaid
-graph TD
-    A["Human approves analysis"] --> B["@document-architect writes"]
-    B --> C["Gemini reviews via brainstorm"]
-    C --> D["Claude validates review"]
-    D --> E{Review valid?}
-    E -->|Yes, APPROVED| F["Finalize document"]
-    E -->|Yes, NEEDS_REVISION| G["Revise document"]
-    E -->|Invalid review| H["Re-review with adjusted prompt"]
-    G --> C
-    H --> C
-    F --> I["Proceed to next phase"]
-```
-
-## Review Process
-
-### 1. Write Document
-
-Claude writes the document following templates below.
-
-### 2. Gemini Review (brainstorm)
+## Output Structure
 
 ```
-Tool: mcp__gemini__gemini-brainstorm
-Params:
-  prompt: "Review this [document type] for completeness, clarity, and feasibility"
-  claudeThoughts: "[Summary of document and key decisions]"
+specs/<NNN>-<feature-name>/
+├── research.md      # Tech stack research
+├── spec.md          # Feature specification
+├── data-model.md    # Data model changes
+├── plan.md          # Implementation plan
+└── tasks.md         # Task breakdown
 ```
 
-### 3. Validate Review
+Numbering: `001-`, `002-`, etc. for feature ordering.
 
-Check Gemini's feedback for:
+---
 
-| Check | Valid | Invalid |
-|-------|-------|---------|
-| Specific, actionable | ✅ | Generic advice |
-| Addresses document goals | ✅ | Off-topic concerns |
-| Feasible suggestions | ✅ | Over-engineering |
-| Consistent with project | ✅ | Conflicts with patterns |
+## research.md Template
 
-If invalid concerns found, re-review with clarified context.
+```markdown
+# [Feature] Research
+
+## Technology Options
+
+### Option A: [Name]
+- **Pros**: 
+- **Cons**: 
+- **Fit**: [High/Medium/Low]
+
+### Option B: [Name]
+- **Pros**: 
+- **Cons**: 
+- **Fit**: [High/Medium/Low]
+
+## Decision
+**Selected**: [Option]
+**Rationale**: [Why]
+
+## Version Requirements
+| Component | Version | Notes |
+|-----------|---------|-------|
+| | | |
+
+## Open Questions
+- [ ] [Question needing clarification]
+```
 
 ---
 
 ## spec.md Template
 
 ```markdown
-# [Feature Name] Specification
+# [Feature] Specification
 
 ## Overview
 [Brief description - what and why]
 
-## Background
-- Current state / pain points
-- Expected benefits
-- Success metrics
+## User Stories
+- As a [role], I want [feature] so that [benefit]
 
 ## Requirements
 
-### Functional Requirements
+### Functional
 | ID | Requirement | Priority | Acceptance Criteria |
 |----|-------------|----------|---------------------|
 | FR-01 | | Must | |
-| FR-02 | | Should | |
 
-### Non-Functional Requirements
+### Non-Functional
 | ID | Category | Requirement | Target |
 |----|----------|-------------|--------|
 | NFR-01 | Performance | | |
@@ -98,15 +92,9 @@ If invalid concerns found, re-review with clarified context.
 ### Out of Scope
 - 
 
-## Technical Overview
-- Components affected
-- New components
-- Integration points
-
 ## Risks
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| | | |
 
 ## Open Questions
 - 
@@ -114,47 +102,70 @@ If invalid concerns found, re-review with clarified context.
 
 ---
 
+## data-model.md Template
+
+```markdown
+# [Feature] Data Model
+
+## New Entities
+
+### [EntityName]
+```
+class EntityName:
+    id: str
+    field1: type
+    field2: type
+    created_at: datetime
+    updated_at: datetime
+```
+
+## Schema Changes
+
+### New Tables
+| Table | Columns | Indexes |
+|-------|---------|---------|
+
+### Migrations
+1. [Migration description]
+
+## Relationships
+```
+EntityA 1--* EntityB
+EntityB *--1 EntityC
+```
+
+## Data Flow
+[How data moves through the system]
+```
+
+---
+
 ## plan.md Template
 
 ```markdown
-# [Feature Name] Implementation Plan
-
-## Overview
-[How the feature will be implemented]
+# [Feature] Implementation Plan
 
 ## Architecture Decisions
 
 ### Decision 1: [Title]
-- **Context**: [Why decision needed]
-- **Options**: [Alternatives considered]
-- **Decision**: [What was chosen]
-- **Rationale**: [Why]
+- **Context**: 
+- **Options**: 
+- **Decision**: 
+- **Rationale**: 
 
 ## Implementation Phases
 
 ### Phase 1: [Name]
 - **Goal**: 
 - **Deliverables**: 
-- **Estimate**: [X days]
+- **Estimate**: 
 
 ### Phase 2: [Name]
 - **Goal**: 
 - **Deliverables**: 
-- **Estimate**: [X days]
+- **Estimate**: 
 
-## Technical Approach
-
-### Data Model Changes
-```
-[Schema or model changes]
-```
-
-### API Changes
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| | | |
-
-### Component Structure
+## Component Structure
 ```
 src/
 ├── domain/
@@ -162,18 +173,18 @@ src/
 └── infrastructure/
 ```
 
-## Testing Strategy
-- Unit tests: [approach]
-- Integration tests: [approach]
-- E2E tests: [approach]
+## API Changes
+| Endpoint | Method | Description |
+|----------|--------|-------------|
 
-## Dependencies
-- [Dependency 1]
-- [Dependency 2]
+## Testing Strategy
+- Unit: 
+- Integration: 
+- E2E: 
 
 ## Rollout Plan
-1. [Step 1]
-2. [Step 2]
+1. 
+2. 
 ```
 
 ---
@@ -181,46 +192,52 @@ src/
 ## tasks.md Template
 
 ```markdown
-# [Feature Name] Tasks
+# [Feature] Tasks
 
 ## Summary
-- Total tasks: [N]
-- Estimated effort: [X days]
+- Total: [N] tasks
+- Phases: [N]
+- Estimate: [X days]
 
-## Tasks
+## Legend
+- `[P]` = Parallelizable with previous task
+- `[D:XXX]` = Depends on task XXX
 
-### Phase 1: [Phase Name]
+## Phase 1: [Name]
 
-- [ ] **TASK-001**: [Title]
-  - Description: [What to do]
-  - Files: [affected files]
-  - Estimate: [hours]
-  - Dependencies: [none or TASK-XXX]
+### TASK-001: [Title]
+- **Files**: [paths]
+- **Estimate**: [hours]
+- **Dependencies**: none
 
-- [ ] **TASK-002**: [Title]
-  - Description: 
-  - Files: 
-  - Estimate: 
-  - Dependencies: TASK-001
+### TASK-002: [Title] [P]
+- **Files**: [paths]
+- **Estimate**: [hours]
+- **Dependencies**: none
 
-### Phase 2: [Phase Name]
+### TASK-003: [Title]
+- **Files**: [paths]
+- **Estimate**: [hours]
+- **Dependencies**: [D:001]
 
-- [ ] **TASK-003**: [Title]
-  - Description: 
-  - Files: 
-  - Estimate: 
-  - Dependencies: 
+### Checkpoint 1
+- [ ] [Validation item]
+- [ ] Tests passing
 
-## Task Dependencies Graph
+## Phase 2: [Name]
 
+### TASK-004: [Title]
+...
+
+## Dependency Graph
 ```
-TASK-001 → TASK-002 → TASK-004
-              ↓
-           TASK-003 → TASK-005
+TASK-001 ──┬── TASK-003 ── TASK-005
+           │
+TASK-002 ──┴── TASK-004 ── TASK-006
 ```
 
 ## Completion Checklist
-- [ ] All tasks completed
+- [ ] All tasks done
 - [ ] Tests passing
 - [ ] Documentation updated
 - [ ] PR created
@@ -228,19 +245,47 @@ TASK-001 → TASK-002 → TASK-004
 
 ---
 
+## Workflow
+
+```mermaid
+graph TD
+    A["Human approves analysis"] --> B["Write research.md"]
+    B --> C["Write spec.md"]
+    C --> D["Write data-model.md"]
+    D --> E["Write plan.md"]
+    E --> F["Write tasks.md"]
+    F --> G["Gemini reviews all"]
+    G --> H["Claude validates review"]
+    H --> I{Valid?}
+    I -->|Yes| J["Finalize"]
+    I -->|No| K["Revise"]
+    K --> G
+```
+
+## Gemini Review (brainstorm)
+
+```
+Tool: mcp__gemini__gemini-brainstorm
+Params:
+  prompt: "Review these documents for: completeness, clarity, feasibility, over-engineering, missing dependencies"
+  claudeThoughts: "[Key decisions, constraints, trade-offs]"
+```
+
+## Validation Checklist
+
+Before finalizing:
+- [ ] research.md has clear decision rationale
+- [ ] spec.md requirements are testable
+- [ ] data-model.md matches spec requirements
+- [ ] plan.md phases are achievable
+- [ ] tasks.md dependencies are correct
+- [ ] No over-engineering (YAGNI)
+- [ ] Gemini review validated
+
 ## Writing Principles
 
-1. **Specific** - No vague language ("should be fast" → "< 200ms")
-2. **Complete** - All sections filled, no TBDs
-3. **Testable** - Every requirement has acceptance criteria
-4. **Actionable** - Tasks are concrete and estimable
-5. **Consistent** - Follows project patterns and terminology
-
-## Quality Gates
-
-Before finalizing any document:
-- [ ] Gemini review completed
-- [ ] Review validated by Claude
-- [ ] No open questions without plan to resolve
-- [ ] All acceptance criteria are testable
-
+1. **Specific** - No vague terms
+2. **Complete** - No TBDs without resolution plan
+3. **Testable** - Every requirement verifiable
+4. **Ordered** - Dependencies explicit
+5. **Lean** - No over-engineering

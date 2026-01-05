@@ -1,4 +1,4 @@
-# /analyze - Analysis Phase
+# /analyze - Analysis & Documentation Phase
 
 ## Flow
 
@@ -8,17 +8,28 @@ graph TD
     B --> C["Present to Human"]
     C --> D{Human Review}
     D -->|Approved| E["@document-architect writes docs"]
-    D -->|Rejected| F["Refine with feedback"]
+    D -->|Rejected| F["Refine"]
     F --> B
-    E --> G["Gemini reviews via brainstorm"]
+    E --> G["Gemini reviews (brainstorm)"]
     G --> H["Claude validates review"]
-    H --> I{Valid review?}
-    I -->|APPROVED| J["Finalize docs"]
-    I -->|NEEDS_REVISION| K["Revise docs"]
-    I -->|Invalid| L["Re-review"]
+    H --> I{Valid?}
+    I -->|APPROVED| J["Finalize"]
+    I -->|NEEDS_REVISION| K["Revise"]
+    I -->|Invalid review| L["Re-review"]
     K --> G
     L --> G
-    J --> M["Auto-proceed to /design"]
+    J --> M["/design"]
+```
+
+## Output Structure
+
+```
+specs/<NNN>-<feature-name>/
+├── research.md      # Tech stack decisions
+├── spec.md          # Requirements
+├── data-model.md    # Data structures
+├── plan.md          # Implementation plan
+└── tasks.md         # Task breakdown
 ```
 
 ## Steps
@@ -29,76 +40,47 @@ graph TD
 
 ### 2. Human Review (Required)
 
-Present findings to human for approval:
-
 ```markdown
 ## Analysis Summary: [Feature Name]
 
-### Requirements Identified
+### Requirements
 - [Requirement 1]
 - [Requirement 2]
 
 ### Technical Findings
 - [Finding 1]
-- [Finding 2]
 
 ### Proposed Scope
-- In scope: [items]
-- Out of scope: [items]
-
-### Open Questions
-- [Question if any]
+- In: [items]
+- Out: [items]
 
 ---
-**Please review and approve to proceed with documentation.**
+**Approve to proceed with documentation?**
 ```
 
-### 3. Document Creation (on approval)
+### 3. Documentation (on approval)
 
-@document-architect creates:
+@document-architect creates all docs:
 
-```
-specs/<feature-name>/
-├── spec.md    # Feature specification
-├── plan.md    # Implementation plan
-└── tasks.md   # Task breakdown
-```
+1. **research.md** - Tech options, decisions, rationale
+2. **spec.md** - Requirements, acceptance criteria
+3. **data-model.md** - Entities, schema, relationships
+4. **plan.md** - Architecture, phases, API changes
+5. **tasks.md** - Task breakdown with `[P]` and `[D:XXX]`
 
-### 4. Gemini Review
+### 4. Review & Validation
 
-Use gemini-brainstorm for collaborative review:
+Gemini reviews → Claude validates → Finalize or revise.
 
-```
-Tool: mcp__gemini__gemini-brainstorm
-Params:
-  prompt: "Review these documents for completeness, clarity, feasibility, and potential issues"
-  claudeThoughts: "[Summary of key decisions and trade-offs]"
-```
+### 5. Proceed
 
-### 5. Review Validation
-
-Claude validates Gemini's review:
-
-| Check | Action |
-|-------|--------|
-| Specific feedback | Accept |
-| Generic advice | Request specifics |
-| Conflicts with project | Reject with reason |
-| Over-engineering | Apply YAGNI |
-
-### 6. Finalize
-
-After valid APPROVED review → /design
+After validation → /design
 
 ## Completion
 
 - [ ] Investigation complete
 - [ ] Human approved
-- [ ] spec.md, plan.md, tasks.md created
-- [ ] Gemini reviewed (brainstorm)
+- [ ] All 5 docs created
+- [ ] Gemini reviewed
 - [ ] Review validated
 - [ ] Ready for /design
-
-## Human Intervention
-
-**Required**: Approval before document creation.
