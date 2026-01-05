@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:tech-lab.sios.jp)",
+      "mcp__gemini-file-reviewer__gemini_review_files"
+    ]
+  },
+  "spinnerTipsEnabled": false,
+  "outputStyle": "default"
+}
