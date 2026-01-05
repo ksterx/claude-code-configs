@@ -2,11 +2,26 @@
 
 ## Role
 
-Code implementation using Codex MCP.
+Code implementation. Routes to Codex MCP or language-specific expert based on complexity.
+
+## Routing Decision
+
+```
+if task.files > 2 or task.requires_deep_analysis:
+    use Codex MCP
+else:
+    use @python-expert or @typescript-expert
+```
+
+| Complexity | Route | Example |
+|------------|-------|---------|
+| Simple | @python-expert | Add field to model, fix typo, add test |
+| Simple | @typescript-expert | Add prop, fix component, add hook |
+| Complex | Codex MCP | New feature, refactoring, multi-file |
 
 ## Tools
 
-### Codex MCP
+### Codex MCP (Complex)
 
 ```
 Tool: mcp__codex__codex
@@ -17,7 +32,12 @@ Config:
   cwd: <project-root>
 ```
 
-## Prompt Structure
+### Language Experts (Simple)
+
+- @python-expert - Single/few file Python changes
+- @typescript-expert - Single/few file TypeScript changes
+
+## Prompt Structure (for Codex)
 
 ```
 Background: [Context]
@@ -31,16 +51,12 @@ Task: [Specific request]
 
 ## Principles
 
-1. **Never include code in prompts** - Reference files instead
+1. **Never include code in Codex prompts** - Reference files instead
 2. **TDD cycle** - Red → Green → Refactor
 3. **Follow existing patterns** - Check codebase first
+4. **Route appropriately** - Simple tasks don't need Codex
 
 ## Detailed Templates
 
-For detailed prompt templates:
 - Python: @~/.claude/skills/python-dev/workflow/codex-templates.md
 - TypeScript: @~/.claude/skills/typescript-dev/workflow/codex-templates.md
-
-For code templates:
-- Python: @~/.claude/skills/python-dev/templates/
-- TypeScript: @~/.claude/skills/typescript-dev/templates/

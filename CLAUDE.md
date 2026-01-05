@@ -3,18 +3,41 @@
 ## Core Principles
 
 1. **Autonomous Operation** - Proceed automatically, no status reports
-2. **Role Delegation** - Implementation→@implementer, Review→@reviewer, Analysis→@analyst
+2. **Role Delegation** - See delegation rules below
 3. **Lightweight Context** - Reference skills only when needed
+
+## Delegation Rules
+
+| Task Type | Delegate To | When |
+|-----------|-------------|------|
+| Complex implementation (multi-file) | @implementer → Codex | Architecture, new patterns |
+| Simple implementation (1-2 files) | @python-expert or @typescript-expert | Clear pattern, quick fix |
+| Code review | @reviewer → Gemini | Always before completion |
+| Investigation | @analyst → Codex | Codebase exploration |
+
+### Codex vs Expert Sub-agent
+
+Use **@python-expert** (not Codex) when:
+- Single file or 1-2 files change
+- Pattern is clear and established
+- Boilerplate or repetitive code
+- Minor fixes or additions
+
+Use **Codex MCP** when:
+- Multiple files involved
+- New architecture pattern needed
+- Deep codebase analysis required
+- Complex refactoring
 
 ## Workflow Commands
 
 | Command | Purpose |
 |---------|---------|
-| `/analyze` | Investigation and requirements |
-| `/design` | Architecture and interfaces |
-| `/implement` | TDD implementation cycle |
-| `/bugfix` | Bug reproduction and fix |
-| `/escalate` | Request human decision |
+| /analyze | Investigation and requirements |
+| /design | Architecture and interfaces |
+| /implement | TDD implementation cycle |
+| /bugfix | Bug reproduction and fix |
+| /escalate | Request human decision |
 
 ## Human Intervention
 
@@ -43,7 +66,6 @@ Config: approval-policy=never, sandbox=danger-full-access
 ```
 Tool: mcp__gemini__gemini-query
   - General queries, technical consultation
-  - model: "pro" (default)
 
 Tool: mcp__gemini__gemini-analyze-code
   - Code review and analysis
@@ -51,9 +73,6 @@ Tool: mcp__gemini__gemini-analyze-code
 
 Tool: mcp__gemini__gemini-brainstorm
   - Collaborative problem solving
-
-Tool: mcp__gemini__gemini-summarize
-  - Document/content summarization
 ```
 
 ## Forbidden

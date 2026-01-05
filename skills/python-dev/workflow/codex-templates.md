@@ -1,13 +1,23 @@
 # Codex Prompt Templates
 
+## When to Use Codex vs @python-expert
+
+| Complexity | Use | Reason |
+|------------|-----|--------|
+| Simple (1-2 files, clear pattern) | @python-expert | Faster, no MCP overhead |
+| Complex (multi-file, architecture) | Codex MCP | Deep analysis capability |
+| Investigation/Research | Codex MCP | Codebase exploration |
+
+---
+
 ## MCP Configuration
 
-```python
-{
-  "approval-policy": "never",
-  "sandbox": "danger-full-access",
-  "cwd": "/path/to/project"
-}
+```
+Tool: mcp__codex__codex
+Config:
+  approval-policy: "never"
+  sandbox: "danger-full-access"
+  cwd: "/path/to/project"
 ```
 
 ---
@@ -23,6 +33,23 @@ Constraints:
 - [Constraint 3]
 
 Task: [Specific implementation task]
+```
+
+---
+
+## Common Constraints Block
+
+Copy-paste this for most Python tasks:
+
+```
+Constraints:
+- Python 3.12+ type hints (str | None, list[str], NOT Optional, List)
+- Clean Architecture (Domain → Application → Infrastructure)
+- SOLID principles
+- Google-style docstrings
+- Async with anyio (if async needed)
+- Security: Input validation, no hardcoded secrets
+- Performance: Avoid N+1 queries, use generators for large data
 ```
 
 ---
@@ -109,13 +136,16 @@ Constraints:
 - pytest with AAA pattern (Arrange/Act/Assert)
 - Test edge cases and error conditions
 - Maintain test isolation
+- Include property-based tests with hypothesis (if applicable)
+- Target 95%+ coverage
 
 Task: Create tests/unit/test_[component].py
 Include tests for:
 1. Happy path
 2. Edge cases (empty input, None values)
 3. Error conditions
-4. [Specific business rules]
+4. Security edge cases (injection, overflow)
+5. [Specific business rules]
 ```
 
 ### Implementation (Green Phase)
@@ -127,6 +157,8 @@ Constraints:
 - Python 3.12+ type hints
 - Follow SOLID principles
 - Match existing code style
+- Input validation for all external data
+- No hardcoded secrets or credentials
 
 Task: Implement [component] to pass all tests
 - Minimal implementation only
@@ -153,15 +185,79 @@ Task:
 
 ---
 
-## Common Constraints Block
+## Security-Focused Templates
 
-Copy-paste this for most Python tasks:
+### Security Review Implementation
 
 ```
+Background: Implementing [feature] with security requirements
+Purpose: Security-hardened implementation
 Constraints:
-- Python 3.12+ type hints (str | None, list[str], NOT Optional, List)
-- Clean Architecture (Domain → Application → Infrastructure)
-- SOLID principles
-- Google-style docstrings
-- Async with anyio (if async needed)
+- OWASP Top 10 compliance
+- Input validation on all entry points
+- Output encoding for user-facing data
+- No SQL injection vulnerabilities
+- Secure secret handling (env vars, not hardcoded)
+- Rate limiting consideration
+
+Task:
+1. Implement with input validation
+2. Add security-focused tests
+3. Document security considerations
+```
+
+### Authentication/Authorization
+
+```
+Background: Implementing auth for [feature]
+Purpose: Secure access control
+Constraints:
+- Principle of least privilege
+- Fail-secure (deny by default)
+- Audit logging for sensitive operations
+- Token/session security best practices
+
+Task:
+1. Implement access control checks
+2. Add audit logging
+3. Test authorization edge cases
+```
+
+---
+
+## Performance-Focused Templates
+
+### Performance-Critical Implementation
+
+```
+Background: Implementing [feature] with performance requirements
+Purpose: Optimized implementation
+Constraints:
+- Profile before optimizing
+- Avoid N+1 queries
+- Use generators for large datasets
+- Consider caching strategy
+- Async for I/O-bound operations
+
+Task:
+1. Implement with performance considerations
+2. Add benchmarks in tests
+3. Document performance characteristics
+```
+
+### Database Optimization
+
+```
+Background: Optimizing database operations for [feature]
+Purpose: Efficient data access
+Constraints:
+- Minimize query count
+- Use appropriate indexes
+- Batch operations where possible
+- Connection pooling
+
+Task:
+1. Analyze current query patterns
+2. Implement optimized queries
+3. Add performance tests
 ```
