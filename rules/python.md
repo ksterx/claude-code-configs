@@ -64,6 +64,7 @@ ruff format                   # formatting
 
 ## Detailed Guides
 
-- @~/.claude/skills/python-dev/guides/coding-standards.md
-- @~/.claude/skills/python-dev/guides/architecture.md
-- @~/.claude/skills/python-dev/guides/testing.md
+For detailed standards, manually reference:
+- `~/.claude/skills/python-dev/guides/coding-standards.md`
+- `~/.claude/skills/python-dev/guides/architecture.md`
+- `~/.claude/skills/python-dev/guides/testing.md`

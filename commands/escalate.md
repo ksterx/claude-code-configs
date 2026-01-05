@@ -32,4 +32,4 @@ B: [approach, pros, cons]
 
 ## Template
 
-@~/.claude/skills/dev-workflow-core/templates/human-intervention.md
+See `~/.claude/skills/dev-workflow-core/templates/human-intervention.md`

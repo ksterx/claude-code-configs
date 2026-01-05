@@ -34,7 +34,7 @@ description: |
 
 ## Shared Patterns
 
-@~/.claude/skills/dev-workflow-core/SKILL.md
+See `~/.claude/skills/dev-workflow-core/SKILL.md`
 
 ---
 
@@ -70,7 +70,7 @@ graph TD
 
 Iterate until Gemini returns "no concerns". Never settle for partial fixes.
 
-@~/.claude/skills/dev-workflow-core/workflow/iteration-control.md
+See `workflow/iteration-control.md` in dev-workflow-core for loop prevention.
 
 ---
 
@@ -100,7 +100,7 @@ graph LR
 
 ## Coding Standards (Summary)
 
-@~/.claude/skills/typescript-dev/guides/coding-standards.md
+See `guides/coding-standards.md` for full details.
 
 ### TypeScript Strict Mode
 
@@ -122,7 +122,7 @@ function getUser(id: any): any { ... }
 
 ## Tech Stack
 
-@~/.claude/skills/typescript-dev/guides/libraries.md
+See `guides/libraries.md` for detailed usage.
 
 | Category | Library | Purpose |
 |----------|---------|---------|

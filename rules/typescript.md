@@ -89,7 +89,8 @@ export function useUser(id: string) {
 
 ## Detailed Guides
 
-- @~/.claude/skills/typescript-dev/guides/coding-standards.md
-- @~/.claude/skills/typescript-dev/guides/architecture.md
-- @~/.claude/skills/typescript-dev/guides/libraries.md
-- @~/.claude/skills/typescript-dev/guides/testing.md
+For detailed standards, manually reference:
+- `~/.claude/skills/typescript-dev/guides/coding-standards.md`
+- `~/.claude/skills/typescript-dev/guides/architecture.md`
+- `~/.claude/skills/typescript-dev/guides/libraries.md`
+- `~/.claude/skills/typescript-dev/guides/testing.md`

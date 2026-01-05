@@ -58,5 +58,6 @@ Task: [Specific request]
 
 ## Detailed Templates
 
-- Python: @~/.claude/skills/python-dev/workflow/codex-templates.md
-- TypeScript: @~/.claude/skills/typescript-dev/workflow/codex-templates.md
+For Codex prompt templates, see:
+- Python: `~/.claude/skills/python-dev/workflow/codex-templates.md`
+- TypeScript: `~/.claude/skills/typescript-dev/workflow/codex-templates.md`

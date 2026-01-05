@@ -26,7 +26,7 @@ description: |
 
 ## Shared Patterns
 
-@~/.claude/skills/dev-workflow-core/SKILL.md
+See `~/.claude/skills/dev-workflow-core/SKILL.md`
 
 ---
 
@@ -62,7 +62,7 @@ graph TD
 
 Iterate until Gemini returns "no concerns". Never settle for partial fixes.
 
-@~/.claude/skills/dev-workflow-core/workflow/iteration-control.md
+See `workflow/iteration-control.md` in dev-workflow-core for loop prevention.
 
 ---
 
@@ -92,7 +92,7 @@ graph LR
 
 ## Coding Standards (Summary)
 
-@~/.claude/skills/python-dev/guides/coding-standards.md
+See `guides/coding-standards.md` for full details.
 
 ### Type Hints (Python 3.12+)
 

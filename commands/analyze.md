@@ -7,18 +7,22 @@ graph TD
     A["/analyze triggered"] --> B["@analyst investigates"]
     B --> C["Present to Human"]
     C --> D{Human Review}
+    D -->|Rejected| B
     D -->|Approved| E["@document-architect writes docs"]
-    D -->|Rejected| F["Refine"]
-    F --> B
-    E --> G["Gemini reviews (brainstorm)"]
-    G --> H["Claude validates review"]
-    H --> I{Valid?}
-    I -->|APPROVED| J["Finalize"]
-    I -->|NEEDS_REVISION| K["Revise"]
-    I -->|Invalid review| L["Re-review"]
-    K --> G
-    L --> G
-    J --> M["/design"]
+    E --> F["Gemini reviews (brainstorm)"]
+    F --> G["Claude validates review"]
+    G --> H{Review valid?}
+    H -->|Invalid/Irrelevant| I["Re-prompt Gemini with context"]
+    I --> F
+    H -->|Valid concerns| J["Apply fixes"]
+    J --> K["Gemini re-reviews"]
+    K --> L{Gemini APPROVED?}
+    L -->|No| M["Claude validates new concerns"]
+    M --> N{Valid?}
+    N -->|Yes| J
+    N -->|No| I
+    L -->|Yes| O["Finalize docs"]
+    O --> P["/design"]
 ```
 
 ## Output Structure
@@ -68,13 +72,54 @@ specs/<NNN>-<feature-name>/
 4. **plan.md** - Architecture, phases, API changes
 5. **tasks.md** - Task breakdown with `[P]` and `[D:XXX]`
 
-### 4. Review & Validation
+### 4. Review Loop (until APPROVED)
 
-Gemini reviews → Claude validates → Finalize or revise.
+```
+iteration = 0
+MAX_ITERATIONS = 3
 
-### 5. Proceed
+while iteration < MAX_ITERATIONS:
+    gemini_review = gemini-brainstorm(docs)
+    
+    if gemini_review.status == "APPROVED":
+        break
+    
+    # Claude validates each concern
+    for concern in gemini_review.concerns:
+        if concern.is_valid and concern.is_relevant:
+            apply_fix(concern)
+        else:
+            # Invalid concern - re-prompt with context
+            add_context_for_next_review(concern.rejection_reason)
+    
+    iteration += 1
 
-After validation → /design
+if iteration >= MAX_ITERATIONS:
+    /escalate
+```
+
+#### Validation Criteria
+
+For each Gemini concern, Claude checks:
+
+| Criteria | Question |
+|----------|----------|
+| Specificity | Is it actionable, not generic? |
+| Relevance | Applies to this project/scope? |
+| Feasibility | Can be fixed within constraints? |
+| Consistency | Aligns with architecture? |
+
+#### Review Outcomes
+
+| Gemini Says | Claude Validates | Action |
+|-------------|------------------|--------|
+| Concern X | Valid | Fix X, re-review |
+| Concern Y | Invalid/Generic | Reject, add context |
+| APPROVED | - | Proceed to /design |
+
+### 5. Finalize & Proceed
+
+After Gemini APPROVED → /design
 
 ## Completion
 
@@ -82,5 +127,12 @@ After validation → /design
 - [ ] Human approved
 - [ ] All 5 docs created
 - [ ] Gemini reviewed
-- [ ] Review validated
+- [ ] All valid concerns fixed
+- [ ] Gemini APPROVED
 - [ ] Ready for /design
+
+## Iteration Limit
+
+Max 3 review cycles. If not APPROVED after 3:
+- /escalate with summary of remaining concerns
+- Human decides: accept as-is, manual fix, or redesign

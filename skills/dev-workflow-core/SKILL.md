@@ -46,9 +46,10 @@ graph TB
 
 ## References
 
-- @~/.claude/skills/dev-workflow-core/workflow/3-agent-overview.md
-- @~/.claude/skills/dev-workflow-core/workflow/iteration-control.md
-- @~/.claude/skills/dev-workflow-core/workflow/review-validation.md
-- @~/.claude/skills/dev-workflow-core/workflow/bug-fix.md
-- @~/.claude/skills/dev-workflow-core/templates/human-intervention.md
-- @~/.claude/skills/dev-workflow-core/templates/adr.md
+For detailed documentation, see:
+- `workflow/3-agent-overview.md`
+- `workflow/iteration-control.md`
+- `workflow/review-validation.md`
+- `workflow/bug-fix.md`
+- `templates/human-intervention.md`
+- `templates/adr.md`
