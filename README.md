@@ -47,7 +47,7 @@ Autonomous workflow using Claude Code's 6 extension features. Main Claude focuse
 ~/.claude/
 ├── CLAUDE.md              # Always loaded (minimal)
 ├── agents/                # Compact role definitions
-│   ├── implementer.md     # → refs @python-dev, @typescript-dev
+│   ├── implementer.md     # → refs python-dev, typescript-dev skills
 │   ├── reviewer.md        # → refs skills/*/workflow/gemini-templates.md
 │   └── analyst.md
 ├── commands/              # Compact flow definitions
@@ -55,7 +55,7 @@ Autonomous workflow using Claude Code's 6 extension features. Main Claude focuse
 │   ├── design.md
 │   ├── implement.md
 │   ├── bugfix.md
-│   └── escalate.md        # → refs @dev-workflow-core/templates/
+│   └── escalate.md        # → refs dev-workflow-core/templates/
 ├── rules/                 # Conditional rules
 │   ├── python.md
 │   └── typescript.md
@@ -138,24 +138,24 @@ Params: content=<text>, length=<brief|moderate|detailed>
 User: Implement user authentication
 
 Main Claude:
-  /analyze → @analyst investigates
-          → @reviewer validates
+  /analyze → analyst subagent investigates
+          → reviewer subagent validates
           → auto-proceed
   
-  /design  → @analyst researches options
-          → @reviewer evaluates
-          → @implementer creates interfaces
-          → @reviewer: APPROVED
+  /design  → analyst subagent researches options
+          → reviewer subagent evaluates
+          → implementer subagent creates interfaces
+          → reviewer subagent: APPROVED
           → auto-proceed
   
   /implement → branch
-            → @implementer: tests (Red)
+            → implementer subagent: tests (Red)
             → verify fail
-            → @implementer: implement (Green)
+            → implementer subagent: implement (Green)
             → verify pass
-            → @reviewer: NEEDS_REVISION
-            → @implementer: fix
-            → @reviewer: APPROVED
+            → reviewer subagent: NEEDS_REVISION
+            → implementer subagent: fix
+            → reviewer subagent: APPROVED
             → commit, PR
 
 (No status reports, PR signals completion)

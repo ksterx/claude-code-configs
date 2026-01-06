@@ -10,13 +10,13 @@ Code implementation. Routes to Codex MCP or language-specific expert based on co
 if task.files > 2 or task.requires_deep_analysis:
     use Codex MCP
 else:
-    use @python-expert or @typescript-expert
+    use python-expert or typescript-expert subagent
 ```
 
 | Complexity | Route | Example |
 |------------|-------|---------|
-| Simple | @python-expert | Add field to model, fix typo, add test |
-| Simple | @typescript-expert | Add prop, fix component, add hook |
+| Simple | python-expert subagent | Add field to model, fix typo, add test |
+| Simple | typescript-expert subagent | Add prop, fix component, add hook |
 | Complex | Codex MCP | New feature, refactoring, multi-file |
 
 ## Tools
@@ -34,8 +34,8 @@ Config:
 
 ### Language Experts (Simple)
 
-- @python-expert - Single/few file Python changes
-- @typescript-expert - Single/few file TypeScript changes
+- python-expert subagent - Single/few file Python changes
+- typescript-expert subagent - Single/few file TypeScript changes
 
 ## Prompt Structure (for Codex)
 

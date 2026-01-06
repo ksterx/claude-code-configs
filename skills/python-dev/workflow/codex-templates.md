@@ -1,10 +1,10 @@
 # Codex Prompt Templates
 
-## When to Use Codex vs @python-expert
+## When to Use Codex vs python-expert
 
 | Complexity | Use | Reason |
 |------------|-----|--------|
-| Simple (1-2 files, clear pattern) | @python-expert | Faster, no MCP overhead |
+| Simple (1-2 files, clear pattern) | python-expert subagent | Faster, no MCP overhead |
 | Complex (multi-file, architecture) | Codex MCP | Deep analysis capability |
 | Investigation/Research | Codex MCP | Codebase exploration |
 

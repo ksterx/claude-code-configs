@@ -1,48 +1,49 @@
-# /analyze - Analysis & Documentation Phase
+# /analyze - Analysis Phase
+
+## Purpose
+
+Investigation and requirements definition. Outputs: `spec.md`, `research.md`
+
+## Output
+
+```
+specs/<NNN>-<feature-name>/
+├── spec.md          # Requirements, user stories, acceptance criteria
+└── research.md      # Tech options, decisions, rationale
+```
 
 ## Flow
 
 ```mermaid
 graph TD
-    A["/analyze triggered"] --> B["@analyst investigates"]
-    B --> C["Present to Human"]
+    A["/analyze triggered"] --> B["analyst subagent investigates"]
+    B --> C["Present findings to Human"]
     C --> D{Human Review}
     D -->|Rejected| B
-    D -->|Approved| E["@document-architect writes docs"]
-    E --> F["Gemini reviews (brainstorm)"]
-    F --> G["Claude validates review"]
-    G --> H{Review valid?}
-    H -->|Invalid/Irrelevant| I["Re-prompt Gemini with context"]
+    D -->|Approved| E["Create spec.md & research.md"]
+    E --> F["Gemini reviews"]
+    F --> G["Claude validates"]
+    G --> H{Valid concerns?}
+    H -->|Yes| I["Fix & re-review"]
     I --> F
-    H -->|Valid concerns| J["Apply fixes"]
-    J --> K["Gemini re-reviews"]
-    K --> L{Gemini APPROVED?}
-    L -->|No| M["Claude validates new concerns"]
-    M --> N{Valid?}
-    N -->|Yes| J
-    N -->|No| I
-    L -->|Yes| O["Finalize docs"]
-    O --> P["/design"]
-```
-
-## Output Structure
-
-```
-specs/<NNN>-<feature-name>/
-├── research.md      # Tech stack decisions
-├── spec.md          # Requirements
-├── data-model.md    # Data structures
-├── plan.md          # Implementation plan
-└── tasks.md         # Task breakdown
+    H -->|No/All fixed| J{Gemini APPROVED?}
+    J -->|No| F
+    J -->|Yes| K["Done → /design"]
 ```
 
 ## Steps
 
 ### 1. Investigation
 
-@analyst investigates codebase and requirements.
+Use analyst subagent to investigate:
+- Codebase structure
+- Existing patterns
+- User requirements
+- Technical constraints
 
 ### 2. Human Review (Required)
+
+Present findings and get approval before creating documents.
 
 ```markdown
 ## Analysis Summary: [Feature Name]
@@ -62,77 +63,61 @@ specs/<NNN>-<feature-name>/
 **Approve to proceed with documentation?**
 ```
 
-### 3. Documentation (on approval)
+### 3. Document Creation (on approval)
 
-@document-architect creates all docs:
+Create using templates:
 
-1. **research.md** - Tech options, decisions, rationale
-2. **spec.md** - Requirements, acceptance criteria
-3. **data-model.md** - Entities, schema, relationships
-4. **plan.md** - Architecture, phases, API changes
-5. **tasks.md** - Task breakdown with `[P]` and `[D:XXX]`
+```
+Template: ~/.claude/templates/spec-template.md → specs/<NNN>-<feature>/spec.md
+Template: (inline research template) → specs/<NNN>-<feature>/research.md
+```
+
+#### spec.md contents
+
+- User stories with priorities (P1, P2, P3...)
+- Acceptance scenarios (Given/When/Then)
+- Functional requirements
+- Key entities
+- Success criteria
+
+#### research.md contents
+
+- Technical options considered
+- Decision rationale
+- Constraints identified
 
 ### 4. Review Loop (until APPROVED)
 
-```
-iteration = 0
+```python
 MAX_ITERATIONS = 3
+iteration = 0
 
 while iteration < MAX_ITERATIONS:
-    gemini_review = gemini-brainstorm(docs)
+    review = gemini_brainstorm(spec.md, research.md)
     
-    if gemini_review.status == "APPROVED":
+    if review.status == "APPROVED":
         break
     
-    # Claude validates each concern
-    for concern in gemini_review.concerns:
-        if concern.is_valid and concern.is_relevant:
+    for concern in review.concerns:
+        if claude_validates(concern):
             apply_fix(concern)
-        else:
-            # Invalid concern - re-prompt with context
-            add_context_for_next_review(concern.rejection_reason)
+        # Invalid concerns are ignored with context added
     
     iteration += 1
 
 if iteration >= MAX_ITERATIONS:
-    /escalate
+    escalate()
 ```
 
-#### Validation Criteria
+### 5. Complete
 
-For each Gemini concern, Claude checks:
+After APPROVED → proceed to `/design`
 
-| Criteria | Question |
-|----------|----------|
-| Specificity | Is it actionable, not generic? |
-| Relevance | Applies to this project/scope? |
-| Feasibility | Can be fixed within constraints? |
-| Consistency | Aligns with architecture? |
-
-#### Review Outcomes
-
-| Gemini Says | Claude Validates | Action |
-|-------------|------------------|--------|
-| Concern X | Valid | Fix X, re-review |
-| Concern Y | Invalid/Generic | Reject, add context |
-| APPROVED | - | Proceed to /design |
-
-### 5. Finalize & Proceed
-
-After Gemini APPROVED → /design
-
-## Completion
+## Checklist
 
 - [ ] Investigation complete
-- [ ] Human approved
-- [ ] All 5 docs created
-- [ ] Gemini reviewed
-- [ ] All valid concerns fixed
+- [ ] Human approved findings
+- [ ] spec.md created
+- [ ] research.md created
 - [ ] Gemini APPROVED
 - [ ] Ready for /design
-
-## Iteration Limit
-
-Max 3 review cycles. If not APPROVED after 3:
-- /escalate with summary of remaining concerns
-- Human decides: accept as-is, manual fix, or redesign
