@@ -11,16 +11,12 @@
 
 | Task | Sub-agent |
 |------|-----------|
-| Complex implementation | implementer subagent → Codex |
-| Simple (1-2 files) | python-expert subagent / typescript-expert subagent |
-| Review | reviewer subagent → Gemini |
-| Investigation | analyst subagent |
+| Complex (3+ files) | implementer → Codex MCP |
+| Simple Python | python-expert |
+| Simple TypeScript | typescript-expert |
+| Review | reviewer → Gemini |
+| Investigation | analyst |
 | Documentation | document-architect |
-
-Sub-agents are called via natural language:
-```
-Use the implementer subagent to...
-```
 
 ## Commands
 
