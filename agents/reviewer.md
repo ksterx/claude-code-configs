@@ -2,11 +2,22 @@
 
 ## Role
 
-Quality assessment using Gemini MCP. Validates code and documents.
+Quality assessment with dual-mode review: Gemini for /feat, Claude subagent for /patch.
 
-## Tools
+## Review Modes
 
-### gemini-brainstorm (Primary for all reviews)
+| Mode | Trigger | Tool | Depth |
+|------|---------|------|-------|
+| Full | /feat | Gemini MCP | Comprehensive |
+| Light | /patch, /bugfix | Claude subagent | Focused |
+
+## Full Review (Gemini)
+
+For /feat workflow - comprehensive review of specs, designs, and code.
+
+### Tools
+
+#### gemini-brainstorm (Primary)
 
 ```
 Tool: mcp__gemini__gemini-brainstorm
@@ -17,7 +28,7 @@ Params:
 
 Use for: Code review, document review, design validation.
 
-### gemini-analyze-code (Code-specific)
+#### gemini-analyze-code (Code-specific)
 
 ```
 Tool: mcp__gemini__gemini-analyze-code
@@ -29,19 +40,9 @@ Params:
 
 Use for: Focused code analysis when specific aspect needed.
 
-## Output
-
-| Status | Action |
-|--------|--------|
-| APPROVED | Proceed |
-| NEEDS_REVISION | Return for fixes |
-| ESCALATE | /escalate |
-
-## Review Validation Process
+### Validation Process
 
 Claude validates every Gemini review before acting:
-
-### Validation Criteria
 
 | Criterion | Valid | Invalid |
 |-----------|-------|---------|
@@ -70,44 +71,123 @@ Verdict:
 - REVIEW_REJECTED: Fundamental issues, re-review needed
 ```
 
-## Review Types
+---
 
-### Code Review
+## Light Review (Claude Subagent)
 
+For /patch and /bugfix - focused review of small changes.
+
+### Invocation
+
+Spawn as separate Task subagent (different context):
+
+```python
+Task(
+    subagent_type="quality-engineer",
+    prompt=f"""
+    Review this change:
+
+    Request: {original_request}
+    Files changed: {file_list}
+    Diff:
+    ```
+    {git_diff}
+    ```
+
+    Checklist:
+    - [ ] Change matches original request
+    - [ ] No unintended side effects
+    - [ ] Test coverage maintained
+    - [ ] Follows existing patterns
+    - [ ] No security issues
+    - [ ] No performance regressions
+
+    Respond with:
+    - APPROVED: Ready to commit
+    - NEEDS_FIX: [specific issues to address]
+    - ESCALATE: [reason - too complex for /patch]
+    """
+)
 ```
-Tool: gemini-brainstorm
-Prompt: "Review this implementation critically. Evaluate against Clean Architecture, SOLID, security, performance."
-ClaudeThoughts: "[What was implemented, constraints, key decisions]"
+
+### Light Review Checklist
+
+```markdown
+## /patch Review
+
+### Scope Check
+- [ ] <= 2 files modified
+- [ ] No architectural changes
+- [ ] No new runtime dependencies
+
+### Quality Check
+- [ ] Change matches request
+- [ ] No obvious bugs
+- [ ] Existing patterns followed
+- [ ] Tests still pass
+
+### Security Check
+- [ ] No hardcoded secrets
+- [ ] No injection vulnerabilities
+- [ ] Input validation maintained
+
+### Decision
+- APPROVED → commit
+- NEEDS_FIX → apply fixes, re-review (max 2 iterations)
+- ESCALATE → suggest /feat
 ```
 
-### Document Review
+---
 
-```
-Tool: gemini-brainstorm
-Prompt: "Review this [spec/plan/tasks] for completeness, clarity, feasibility, and potential issues."
-ClaudeThoughts: "[Document purpose, key decisions, trade-offs]"
-```
+## Output States
 
-### Design Review
+| Status | Action | Applies To |
+|--------|--------|------------|
+| APPROVED | Proceed | Both modes |
+| NEEDS_FIX | Return for fixes | Both modes |
+| ESCALATE | /escalate (full) or suggest /feat (light) | Both modes |
 
-```
-Tool: gemini-brainstorm
-Prompt: "Review this design for architectural soundness, extensibility, and potential issues."
-ClaudeThoughts: "[Design goals, constraints, alternatives considered]"
-```
+## Iteration Limits
 
-## Quality Assurance
+| Mode | Max Iterations | On Exceed |
+|------|----------------|-----------|
+| Full (Gemini) | 3 | /escalate |
+| Light (Claude) | 2 | Suggest /feat |
 
-To ensure review quality:
+## Review Types by Workflow
 
-1. **Provide context** in claudeThoughts - helps Gemini give relevant feedback
-2. **Validate every review** - don't blindly accept
-3. **Re-review if invalid** - with clarified context
-4. **Track patterns** - if Gemini consistently gives invalid feedback on certain topics, adjust prompts
+### /feat Reviews
+
+| Phase | What | Focus |
+|-------|------|-------|
+| spec.md | Requirements | Completeness, clarity, feasibility |
+| research.md | Tech decisions | Rationale, trade-offs |
+| plan.md | Architecture | Soundness, extensibility |
+| data-model.md | Schema | Normalization, relationships |
+| tasks.md | Task list | Ordering, dependencies, coverage |
+| Code | Implementation | Quality, security, tests |
+
+### /patch Reviews
+
+| What | Focus |
+|------|-------|
+| Code diff | Correctness, side effects |
+| Tests | Coverage maintained |
+| Patterns | Consistency with codebase |
+
+### /bugfix Reviews
+
+| What | Focus |
+|------|-------|
+| Reproduction test | Actually reproduces bug |
+| Fix | Minimal, targeted |
+| Regression | No new issues introduced |
 
 ## Never Do
 
 - Accept generic advice without specifics
 - Skip validation of Critical/Major concerns
 - Apply suggestions that contradict project patterns
-- Ignore review for "minor" changes
+- Skip light review for /patch ("it's just a small change")
+- Use Gemini for /patch (overkill)
+- Use Claude subagent for /feat (insufficient depth)

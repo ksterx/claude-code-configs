@@ -1,12 +1,12 @@
 ---
 name: python-dev
-version: 1.1.0
+version: 2.0.0
 description: |
-  Use for ALL Python backend development tasks.
-  Applies Clean Architecture + SOLID + TDD with 3-agent workflow.
+  Use for ALL Python development tasks.
+  Supports multiple project profiles: Clean Architecture, CLI, ML, Library, Script.
 
-  Triggers: Python, FastAPI, Django, Clean Architecture, Repository, Domain, Backend, API
-  Use cases: Backend development, API implementation, Domain-Driven Design
+  Triggers: Python, FastAPI, Django, Clean Architecture, CLI, ML, PyTorch, Package
+  Use cases: Backend development, CLI tools, ML pipelines, Python packages
 
   Extends: dev-workflow-core (shared workflow patterns)
 ---
@@ -30,15 +30,70 @@ See `~/.claude/skills/dev-workflow-core/SKILL.md`
 
 ---
 
+## Workflow Integration
+
+### Track Selection
+
+| Scenario | Track | Example |
+|----------|-------|---------|
+| New feature | /feat | "Add user authentication" |
+| Bug fix, typo, minor change | /patch | "Fix validation in user model" |
+| Code understanding | /explore | "How does the auth flow work?" |
+
+### /feat for Python
+
+```
+/feat "Add caching to API responses"
+
+1. Intent verification
+2. spec.md (requirements)
+3. plan.md (architecture per project profile)
+4. tasks.md (ordered implementation)
+5. TDD implementation
+6. PR
+```
+
+### /patch for Python
+
+```
+/patch "Fix null check in user lookup"
+
+1. Scope check (≤2 files)
+2. python-expert implements
+3. Tests pass
+4. Claude subagent review
+5. Commit
+```
+
+---
+
+## Project Profiles
+
+Automatically detected or set via `/mode`:
+
+| Profile | Use Case | Complexity |
+|---------|----------|------------|
+| clean-arch | FastAPI services, DDD | High |
+| cli | Command-line tools | Medium |
+| ml-package | Training/inference pipelines | Medium-High |
+| python-lib | Reusable packages | Medium |
+| script | One-off utilities | Low |
+
+See `~/.claude/agents/backend-architect.md` for profile details.
+
+---
+
 ## Prime Directives
 
 ### 1. Role Assignment
 
-| Agent | Normal | Codex Unavailable |
-|-------|--------|-------------------|
-| **Claude** | Orchestration, decisions | Decisions + implementation |
-| **Codex** | Code implementation | — |
-| **Gemini** | Review, quality assessment | Review (required) |
+| Agent | /feat | /patch |
+|-------|-------|--------|
+| **Claude** | Orchestration | Coordination |
+| **Codex** | Complex (3+ files) | — |
+| **python-expert** | Simple (1-2 files) | Implementation |
+| **Gemini** | Full review | — |
+| **Claude Subagent** | — | Light review |
 
 ### 2. Claude Direct Execution
 
@@ -46,7 +101,7 @@ The following do NOT require Codex:
 - Git operations (commit, push, PR)
 - File creation/deletion
 - Minor fixes (1-2 lines)
-- Implementation during Codex rate limits
+- /patch implementations
 
 ### 3. Codex Fallback
 
@@ -54,39 +109,13 @@ The following do NOT require Codex:
 graph TD
     A[Codex invocation] --> B{Success?}
     B -->|Yes| C[Normal flow]
-    B -->|No| D[Claude implements]
-    D --> E[Gemini review - required]
+    B -->|No| D[python-expert implements]
+    D --> E[Review required]
 ```
 
 ### 4. Complete Resolution Principle
 
-Iterate until Gemini returns "no concerns". Never settle for partial fixes.
-
-See `workflow/iteration-control.md` in dev-workflow-core for loop prevention.
-
----
-
-## Quick Start
-
-### Basic Flow
-
-```mermaid
-graph LR
-    subgraph Phase1[Phase 1: Analysis]
-        A1[Codex investigation] --> A2[Gemini analysis]
-    end
-    subgraph Phase2[Phase 2: Design]
-        B1[Codex design] --> B2[Gemini review] --> B3[Iterate]
-    end
-    subgraph Phase3[Phase 3: Implementation]
-        C1[Create branch] --> C2[Tests - Red]
-        C2 --> C3[Implement - Green]
-        C3 --> C4[Refactor]
-        C4 --> C5[Docs + Commit]
-        C5 --> C6[PR]
-    end
-    Phase1 --> Phase2 --> Phase3
-```
+Iterate until reviewer returns "APPROVED". Never settle for partial fixes.
 
 ---
 

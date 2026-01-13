@@ -1,9 +1,9 @@
 ---
 name: typescript-dev
-version: 1.2.0
+version: 2.0.0
 description: |
   Use for ALL TypeScript/Next.js frontend development tasks.
-  Applies Feature-based Architecture + TDD + Design Consistency with 3-agent workflow.
+  Applies Feature-based Architecture + TDD + Design Consistency with 3-track workflow.
 
   Triggers: TypeScript, Next.js, React, Frontend, TSX, Component, shadcn, UI
   Use cases: Frontend development, UI implementation, Next.js App Router
@@ -38,15 +38,54 @@ See `~/.claude/skills/dev-workflow-core/SKILL.md`
 
 ---
 
+## Workflow Integration
+
+### Track Selection
+
+| Scenario | Track | Example |
+|----------|-------|---------|
+| New feature/page | /feat | "Add user dashboard page" |
+| Component fix, style tweak | /patch | "Fix button hover state" |
+| Code understanding | /explore | "How does the auth context work?" |
+
+### /feat for TypeScript
+
+```
+/feat "Add user settings page"
+
+1. Intent verification
+2. spec.md (requirements, user stories)
+3. plan.md (component architecture)
+4. tasks.md (ordered implementation)
+5. TDD implementation + Storybook
+6. PR
+```
+
+### /patch for TypeScript
+
+```
+/patch "Fix loading state in UserCard"
+
+1. Scope check (≤2 files)
+2. typescript-expert implements
+3. Tests pass
+4. Claude subagent review
+5. Commit
+```
+
+---
+
 ## Prime Directives
 
 ### 1. Role Assignment
 
-| Agent | Normal | Codex Unavailable |
-|-------|--------|-------------------|
-| **Claude** | Orchestration, decisions | Decisions + implementation |
-| **Codex** | Code implementation | — |
-| **Gemini** | Review, quality assessment | Review (required) |
+| Agent | /feat | /patch |
+|-------|-------|--------|
+| **Claude** | Orchestration | Coordination |
+| **Codex** | Complex (3+ files) | — |
+| **typescript-expert** | Simple (1-2 files) | Implementation |
+| **Gemini** | Full review | — |
+| **Claude Subagent** | — | Light review |
 
 ### 2. Claude Direct Execution
 
@@ -54,7 +93,7 @@ The following do NOT require Codex:
 - Git operations (commit, push, PR)
 - File creation/deletion
 - Minor fixes (1-2 lines)
-- Implementation during Codex rate limits
+- /patch implementations
 
 ### 3. Codex Fallback
 
@@ -62,39 +101,13 @@ The following do NOT require Codex:
 graph TD
     A[Codex invocation] --> B{Success?}
     B -->|Yes| C[Normal flow]
-    B -->|No| D[Claude implements]
-    D --> E[Gemini review - required]
+    B -->|No| D[typescript-expert implements]
+    D --> E[Review required]
 ```
 
 ### 4. Complete Resolution Principle
 
-Iterate until Gemini returns "no concerns". Never settle for partial fixes.
-
-See `workflow/iteration-control.md` in dev-workflow-core for loop prevention.
-
----
-
-## Quick Start
-
-### Basic Flow
-
-```mermaid
-graph LR
-    subgraph Phase1[Phase 1: Analysis]
-        A1[Codex investigation] --> A2[Gemini analysis]
-    end
-    subgraph Phase2[Phase 2: Design]
-        B1[Codex design] --> B2[Gemini review] --> B3[Iterate]
-    end
-    subgraph Phase3[Phase 3: Implementation]
-        C1[Create branch] --> C2[Tests - Red]
-        C2 --> C3[Implement - Green]
-        C3 --> C4[Refactor]
-        C4 --> C5[Storybook + Commit]
-        C5 --> C6[PR]
-    end
-    Phase1 --> Phase2 --> Phase3
-```
+Iterate until reviewer returns "APPROVED". Never settle for partial fixes.
 
 ---
 
