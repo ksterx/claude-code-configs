@@ -8,38 +8,15 @@
 4. **Validate Reviews** - Never accept review without validation
 5. **Project Awareness** - Adapt to project type (Clean Arch, CLI, ML, etc.)
 
-## Workflow Tracks
+> **Details**: See `skills/dev-workflow-core/SKILL.md` for workflow tracks, agent roles, and review modes.
 
-| Track | Use Case | Review | Output |
-|-------|----------|--------|--------|
-| /feat | New feature, complex changes | Gemini + Claude | spec.md, plan.md, tasks.md, code |
-| /patch | Quick fix (1-2 files) | Claude subagent | code only |
-| /explore | Investigation, understanding | None | findings (no files) |
-| /bugfix | Bug reproduction + fix | Claude subagent | code + test |
+## Diagram Guidelines
 
-## Delegation
-
-| Task | Sub-agent |
-|------|-----------|
-| Complex (3+ files) | implementer → Codex MCP |
-| Simple Python | python-expert |
-| Simple TypeScript | typescript-expert |
-| /feat Review | reviewer → Gemini |
-| /patch Review | reviewer → Claude subagent |
-| Investigation | analyst |
-| Documentation | document-architect |
-
-## Project Types
-
-Auto-detected or set via `/mode`:
-
-| Type | Markers | Architect Behavior |
-|------|---------|-------------------|
-| clean-arch | app/domain, app/use_cases | Enforce dependency rule |
-| cli | cli.py, typer/click | Single entry, simple structure |
-| ml-package | train.py, models/ | Reproducibility, config-driven |
-| python-lib | src/, pyproject.toml | API stability, type hints |
-| script | flat .py files | Minimal abstraction |
+- **Use mermaid** for all diagrams (flowcharts, sequence, class, ER, etc.)
+- **Exceptions** (use ASCII/text):
+  - Directory trees (`├──`, `└──`)
+  - UI mockups / wireframes
+  - Simple tables (markdown table is fine)
 
 ## Human Intervention
 
@@ -64,11 +41,6 @@ Claude subagent review → APPROVED or escalate to /feat
 - Scope exceeds 2 files in /patch
 - Security concerns
 - Architectural impact detected
-
-## MCP Tools
-
-- Codex: `mcp__codex__codex` (approval-policy=never)
-- Gemini: `mcp__gemini__gemini-brainstorm` (for /feat reviews)
 
 ## Forbidden
 
