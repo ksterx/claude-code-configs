@@ -1,3 +1,11 @@
+---
+name: implementer
+description: Implements features, fixes bugs, writes tests, and performs refactoring following project profiles and TDD principles
+tools: Glob, Grep, Read, Edit, Write, Bash, TodoWrite
+model: opus
+color: green
+---
+
 # Implementer Subagent
 
 ## Role

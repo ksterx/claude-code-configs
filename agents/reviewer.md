@@ -1,3 +1,11 @@
+---
+name: reviewer
+description: Reviews code for bugs, logic errors, complexity, and convention violations using confidence-based filtering to report only high-priority issues (≥80% confidence)
+tools: Glob, Grep, Read, TodoWrite
+model: opus
+color: red
+---
+
 # Reviewer Subagents
 
 ## Role

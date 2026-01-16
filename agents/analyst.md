@@ -1,3 +1,11 @@
+---
+name: analyst
+description: Investigates codebase, analyzes architecture, performs root cause analysis, and evaluates technologies using Codex for code exploration and Gemini for technical consultation
+tools: Glob, Grep, Read, WebFetch, WebSearch, TodoWrite
+model: opus
+color: blue
+---
+
 # Analyst Subagent
 
 ## Role
