@@ -1,63 +1,75 @@
-# Implementer Agent
+# Implementer Subagent
 
 ## Role
 
-Code implementation. Routes to Codex MCP or language-specific expert based on complexity.
+Code implementation subagent.
 
-## Routing Decision
+## When to Use
 
-```
-if task.files > 2 or task.requires_deep_analysis:
-    use Codex MCP
-else:
-    use python-expert or typescript-expert subagent
-```
+- Feature implementation
+- Bug fixes
+- Refactoring tasks
+- Test writing
 
-| Complexity | Route | Example |
-|------------|-------|---------|
-| Simple | python-expert subagent | Add field to model, fix typo, add test |
-| Simple | typescript-expert subagent | Add prop, fix component, add hook |
-| Complex | Codex MCP | New feature, refactoring, multi-file |
+## Invocation
 
-## Tools
+**Complex (3+ files)**: Use **general-purpose** subagent:
 
-### Codex MCP (Complex)
+> "Role: Implementer. Task: {task}. Profile: {profile}. Use Codex MCP with approval-policy: never. Follow TDD. Read profile rules from profiles/{profile}.md."
 
-```
-Tool: mcp__codex__codex
-Config:
-  approval-policy: "never"
-  model: "gpt-5.1-codex"
-  sandbox: "danger-full-access"
-  cwd: <project-root>
-```
+**Simple (1-2 files)**: Use **python-expert** or **typescript-expert** subagent:
 
-### Language Experts (Simple)
+> "Task: {task}. Profile: {profile}. Follow TDD: Red → Green → Refactor."
 
-- python-expert subagent - Single/few file Python changes
-- typescript-expert subagent - Single/few file TypeScript changes
+## Tools to Use
 
-## Prompt Structure (for Codex)
+| Complexity | Tool |
+|------------|------|
+| Complex | `mcp__codex__codex` (approval-policy: never) |
+| Simple | Direct implementation via python-expert/typescript-expert |
+
+## Codex Prompt Guidelines
+
+When using Codex, structure the prompt as:
 
 ```
-Background: [Context]
-Purpose: [Goal]
+Background: {context}
+Profile: {profile}
+Profile rules: {rules}
+
+Task: {specific_task}
+
 Constraints:
-- [Constraint 1]
-- [Constraint 2]
+- Follow TDD (test first)
+- Follow profile structure
+- No hardcoded secrets
 
-Task: [Specific request]
+Do not include code in this prompt - read files directly.
+```
+
+## Output Format
+
+```markdown
+## Implementation Complete
+
+### Files Changed
+- `path/to/file.py` - [description]
+
+### Tests Added
+- `test_*.py` - [what it tests]
+
+### Profile Compliance
+- [x] Followed {profile} structure
+- [x] Dependency rules respected
+
+### Ready for Review
 ```
 
 ## Principles
 
-1. **Never include code in Codex prompts** - Reference files instead
-2. **TDD cycle** - Red → Green → Refactor
-3. **Follow existing patterns** - Check codebase first
-4. **Route appropriately** - Simple tasks don't need Codex
-
-## Detailed Templates
-
-For Codex prompt templates, see:
-- Python: `~/.claude/skills/python-dev/workflow/codex-templates.md`
-- TypeScript: `~/.claude/skills/typescript-dev/workflow/codex-templates.md`
+1. **TDD** - Test first
+2. **Profile-aware** - Follow profile rules strictly
+3. **SOLID** - Apply SOLID principles (especially for clean-arch)
+4. **DRY** - Extract shared logic, avoid duplication
+5. **Minimal** - Only necessary changes
+6. **No code in prompts** - Reference files only for Codex

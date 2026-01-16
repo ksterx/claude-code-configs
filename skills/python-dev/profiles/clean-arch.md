@@ -6,10 +6,23 @@
 
 ## Principles
 
-- Enforce dependency rule (domain <- application <- infra)
+### Architecture
+- Enforce dependency rule (domain ← application ← infra)
 - Use Cases as application services
 - Repository pattern for data access
 - Domain models independent of frameworks
+
+### SOLID
+- **S**ingle Responsibility - One reason to change per class
+- **O**pen/Closed - Open for extension, closed for modification
+- **L**iskov Substitution - Subtypes must be substitutable
+- **I**nterface Segregation - Small, focused interfaces
+- **D**ependency Inversion - Depend on abstractions, not concretions
+
+### DRY
+- Extract shared logic to domain services
+- Use base classes/mixins for common behavior
+- Centralize validation rules in value objects
 
 ## Structure
 
