@@ -1,5 +1,64 @@
 # Gemini Review Templates (Python)
 
+## Context Requirements (CRITICAL)
+
+**Before calling Gemini, Claude MUST gather and include context.**
+
+Gemini reviews code in isolation. Without context, it produces generic/irrelevant feedback.
+
+### Required Context Checklist
+
+| Context | Source | Why |
+|---------|--------|-----|
+| **Tech Stack** | pyproject.toml, requirements.txt | Avoid incompatible library suggestions |
+| **Project Patterns** | Existing similar code in codebase | Ensure consistency |
+| **Conventions** | CLAUDE.md, existing code style | Prevent style conflicts |
+| **Design Decisions** | spec.md, plan.md (if exists) | Align with design intent |
+| **Constraints** | Project-specific limitations | Avoid impractical suggestions |
+
+### Context Injection Template
+
+```
+## Project Context
+- Project Type: [clean-arch / cli / ml-package / python-lib / script]
+- Tech Stack: [key dependencies from pyproject.toml]
+- Python Version: [version]
+- Conventions: [observed patterns from codebase]
+- Related Code: [similar implementations if relevant]
+- Design Context: [key decisions from spec.md/plan.md if available]
+
+## Code to Review
+[actual code]
+
+## Review Request
+[standard review prompt below]
+```
+
+### Example: Good vs Bad Context
+
+❌ **Bad** (no context):
+```
+Review this code for quality.
+[code]
+```
+
+✅ **Good** (with context):
+```
+## Project Context
+- Project Type: clean-arch
+- Tech Stack: FastAPI, SQLAlchemy, Pydantic v2
+- Conventions: Repository pattern for data access, domain entities are pure dataclasses
+- Related Code: See existing UserRepository pattern using Protocol
+
+## Code to Review
+[code]
+
+## Review Request
+Review this implementation critically against Clean Architecture and project conventions.
+```
+
+---
+
 ## MCP Tools (gemini-mcp)
 
 ### gemini-analyze-code

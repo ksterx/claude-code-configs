@@ -1,5 +1,66 @@
 # Gemini Review Templates (TypeScript)
 
+## Context Requirements (CRITICAL)
+
+**Before calling Gemini, Claude MUST gather and include context.**
+
+Gemini reviews code in isolation. Without context, it produces generic/irrelevant feedback.
+
+### Required Context Checklist
+
+| Context | Source | Why |
+|---------|--------|-----|
+| **Tech Stack** | package.json | Avoid incompatible library suggestions |
+| **Project Patterns** | Existing similar code in codebase | Ensure consistency |
+| **Conventions** | CLAUDE.md, existing code style | Prevent style conflicts |
+| **Design Decisions** | spec.md, plan.md (if exists) | Align with design intent |
+| **UI Framework** | shadcn components used | Ensure design system consistency |
+
+### Context Injection Template
+
+```
+## Project Context
+- Framework: Next.js [version] with App Router
+- State: Zustand (global), TanStack Query (server)
+- Forms: React Hook Form + Zod
+- UI: shadcn/ui, Framer Motion
+- Conventions: [observed patterns from codebase]
+- Related Code: [similar implementations if relevant]
+- Design Context: [key decisions from spec.md/plan.md if available]
+
+## Code to Review
+[actual code]
+
+## Review Request
+[standard review prompt below]
+```
+
+### Example: Good vs Bad Context
+
+❌ **Bad** (no context):
+```
+Review this React component.
+[code]
+```
+
+✅ **Good** (with context):
+```
+## Project Context
+- Framework: Next.js 14 with App Router
+- UI: shadcn/ui with custom theme
+- State: Zustand for cart, TanStack Query for products
+- Conventions: Feature-based structure, PageContainer layout pattern
+- Related Code: See existing ProductCard component in features/products/
+
+## Code to Review
+[code]
+
+## Review Request
+Review this implementation critically against Feature-based Architecture and project conventions.
+```
+
+---
+
 ## MCP Tools (gemini-mcp)
 
 ### gemini-analyze-code

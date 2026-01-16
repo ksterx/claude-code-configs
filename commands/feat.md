@@ -22,13 +22,42 @@ graph TD
     E --> C
     D -->|Yes| F["Create spec.md, research.md"]
     F --> G["Gemini reviews spec"]
-    G --> H["Design: plan.md, data-model.md"]
+    G --> G1["Claude validates review"]
+    G1 --> G2{Valid?}
+    G2 -->|ACCEPTED| H["Design: plan.md, data-model.md"]
+    G2 -->|ADJUSTED| G3["Fix valid concerns only"]
+    G2 -->|REJECTED| G4["Re-review with more context"]
+    G3 --> G
+    G4 --> G
     H --> I["Gemini reviews design"]
-    I --> J["Generate tasks.md"]
+    I --> I1["Claude validates review"]
+    I1 --> I2{Valid?}
+    I2 -->|ACCEPTED| J["Generate tasks.md"]
+    I2 -->|ADJUSTED/REJECTED| I3["Fix or re-review"]
+    I3 --> I
     J --> K["Gemini reviews tasks"]
-    K --> L["Implementation loop"]
+    K --> K1["Claude validates review"]
+    K1 --> K2{Valid?}
+    K2 -->|ACCEPTED| L["Implementation loop"]
+    K2 -->|ADJUSTED/REJECTED| K3["Fix or re-review"]
+    K3 --> K
     L --> M["Final PR"]
 ```
+
+### Validation Phase (CRITICAL)
+
+**Every Gemini review MUST be validated by Claude before acting.**
+
+```mermaid
+graph LR
+    A["Gemini Review"] --> B["Claude Validates"]
+    B --> C{Outcome}
+    C -->|ACCEPTED| D["Apply all fixes"]
+    C -->|ADJUSTED| E["Apply valid only"]
+    C -->|REJECTED| F["Re-prompt with context"]
+```
+
+See `skills/dev-workflow-core/workflow/review-validation.md` for validation criteria.
 
 ## Phases
 

@@ -2,19 +2,88 @@
 
 ## Purpose
 
-Gemini reviews are valuable but not infallible. Validate reviews before acting on them.
+Gemini reviews are valuable but not infallible. **Every Gemini review MUST be validated by Claude before acting.**
+
+Without validation:
+- False positives waste time fixing non-issues
+- False negatives miss real problems
+- Generic advice conflicts with project patterns
+- Over-engineering suggestions violate YAGNI
 
 ## Validation Flow
 
 ```mermaid
 graph TD
-    A[Gemini Review] --> B{Validate Review}
-    B --> C[ACCEPTED]
-    B --> D[ADJUSTED]
-    B --> E[REJECTED]
-    C --> F[Apply All Changes]
-    D --> G[Apply with Modifications]
-    E --> H[Document Rejection]
+    A["Receive Gemini Review"] --> B["Step 1: Check context provided"]
+    B --> B1{Was project context included?}
+    B1 -->|No| B2["REJECTED: Re-review with context"]
+    B1 -->|Yes| C["Step 2: Validate each concern"]
+    C --> D["For each concern check:"]
+    D --> D1["Technical accuracy?"]
+    D --> D2["Project relevance?"]
+    D --> D3["Severity appropriate?"]
+    D --> D4["Not a false positive?"]
+    D1 --> E["Step 3: Categorize result"]
+    D2 --> E
+    D3 --> E
+    D4 --> E
+    E --> F{All concerns valid?}
+    F -->|Yes| G["ACCEPTED"]
+    F -->|Some invalid| H["ADJUSTED"]
+    F -->|Most invalid| I["REJECTED"]
+    G --> J["Apply all fixes"]
+    H --> K["Apply valid only, skip invalid"]
+    I --> L["Re-prompt with more context"]
+```
+
+## Step-by-Step Validation Process
+
+### Step 1: Verify Context Was Provided
+
+Before accepting any review, confirm Gemini received:
+
+- [ ] Project type (clean-arch, cli, ml-package, etc.)
+- [ ] Tech stack (dependencies, versions)
+- [ ] Project conventions/patterns
+- [ ] Related existing code (if relevant)
+
+**If context was missing → REJECTED, re-review with context.**
+
+### Step 2: Validate Each Concern
+
+For **every concern** Gemini raised, Claude asks:
+
+| Question | If No |
+|----------|-------|
+| Is this technically accurate? | Mark as false positive |
+| Does this apply to this project? | Mark as irrelevant |
+| Is severity (Critical/Major/Minor) correct? | Adjust severity |
+| Does this conflict with existing patterns? | Check project conventions |
+| Is this actionable without over-engineering? | Apply YAGNI |
+
+### Step 3: Categorize Validation Result
+
+| Result | Criteria | Action |
+|--------|----------|--------|
+| **ACCEPTED** | All concerns valid and applicable | Apply all fixes |
+| **ADJUSTED** | Some concerns invalid or need modification | Apply valid only, document skips |
+| **REJECTED** | Most concerns invalid, context clearly missing | Re-prompt with better context |
+
+### Step 4: Document Validation
+
+**Always output validation summary before proceeding:**
+
+```markdown
+## Review Validation
+
+**Result**: [ACCEPTED / ADJUSTED / REJECTED]
+
+**Concerns Analysis**:
+- [Concern 1]: ✓ Valid - will fix
+- [Concern 2]: ✗ False positive - [reason]
+- [Concern 3]: ⚠ Adjusted severity from Critical to Minor
+
+**Action**: [What will be done]
 ```
 
 ## Validation Criteria

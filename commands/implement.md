@@ -28,15 +28,40 @@ graph TD
     F --> H["Verify test fails"]
     H --> G
     G --> I["Verify test passes"]
-    I --> J["reviewer reviews"]
-    J --> K{APPROVED?}
-    K -->|No| L["Fix issues"]
-    L --> J
-    K -->|Yes| M{More tasks?}
+    I --> J["Gemini reviews with context"]
+    J --> J1["Claude validates review"]
+    J1 --> J2{Validation result?}
+    J2 -->|ACCEPTED| K["Apply all fixes"]
+    J2 -->|ADJUSTED| K2["Apply valid fixes only"]
+    J2 -->|REJECTED| K3["Re-review with more context"]
+    K --> L{Concerns fixed?}
+    K2 --> L
+    K3 --> J
+    L -->|Yes| M{More tasks?}
+    L -->|No, iterate| J
     M -->|Yes| D
     M -->|No| N["Refactor if needed"]
     N --> O["Commit & PR"]
 ```
+
+### Review-Validation Loop (CRITICAL)
+
+```mermaid
+graph LR
+    subgraph "Per Task"
+        A["Implement"] --> B["Gemini reviews<br/>(with project context)"]
+        B --> C["Claude validates"]
+        C --> D{Valid?}
+        D -->|ACCEPTED| E["Fix all"]
+        D -->|ADJUSTED| F["Fix valid only"]
+        D -->|REJECTED| G["Re-prompt"]
+        G --> B
+        E --> H["Next task"]
+        F --> H
+    end
+```
+
+**Context must include**: Tech stack, project patterns, related code (see `skills/*/workflow/gemini-templates.md`).
 
 ## Steps
 
