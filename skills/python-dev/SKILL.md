@@ -79,7 +79,7 @@ Automatically detected or set via `/mode`:
 | python-lib | Reusable packages | Medium |
 | script | One-off utilities | Low |
 
-See `~/.claude/agents/backend-architect.md` for profile details.
+See `profiles/README.md` for detection logic and details.
 
 ---
 
