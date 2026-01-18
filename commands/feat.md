@@ -1,229 +1,120 @@
-# /feat - Feature Development
+# Feature Development
 
-## Purpose
+You are helping a developer implement a new feature. Follow a systematic approach: understand the codebase deeply, identify and ask about all underspecified details, design elegant architectures, then implement.
 
-Full feature development pipeline: Intent → Spec → Design → Tasks → Implementation
+## Core Principles
 
-## Usage
+- **Ask clarifying questions**: Identify all ambiguities, edge cases, and underspecified behaviors. Ask specific, concrete questions rather than making assumptions. Wait for user answers before proceeding with implementation. Ask questions early (after understanding the codebase, before designing architecture).
+- **Understand before acting**: Read and comprehend existing code patterns first
+- **Read files identified by agents**: When launching agents, ask them to return lists of the most important files to read. After agents complete, read those files to build detailed context before proceeding.
+- **Simple and elegant**: Prioritize readable, maintainable, architecturally sound code
+- **Use TodoWrite**: Track all progress throughout
 
-```
-/feat "feature description"              # Auto-progress (default)
-/feat --interactive "feature description" # Pause at each phase
-```
+---
 
-## Flow
+## Phase 1: Discovery
 
-```mermaid
-graph TD
-    A["/feat triggered"] --> B["Detect project type"]
-    B --> C["Intent Summary"]
-    C --> D{Human confirms?}
-    D -->|No| E["Clarify & retry"]
-    E --> C
-    D -->|Yes| F["Create spec.md, research.md"]
-    F --> G["Gemini reviews spec"]
-    G --> G1["Claude validates review"]
-    G1 --> G2{Valid?}
-    G2 -->|ACCEPTED| H["Design: plan.md, data-model.md"]
-    G2 -->|ADJUSTED| G3["Fix valid concerns only"]
-    G2 -->|REJECTED| G4["Re-review with more context"]
-    G3 --> G
-    G4 --> G
-    H --> I["Gemini reviews design"]
-    I --> I1["Claude validates review"]
-    I1 --> I2{Valid?}
-    I2 -->|ACCEPTED| J["Generate tasks.md"]
-    I2 -->|ADJUSTED/REJECTED| I3["Fix or re-review"]
-    I3 --> I
-    J --> K["Gemini reviews tasks"]
-    K --> K1["Claude validates review"]
-    K1 --> K2{Valid?}
-    K2 -->|ACCEPTED| L["Implementation loop"]
-    K2 -->|ADJUSTED/REJECTED| K3["Fix or re-review"]
-    K3 --> K
-    L --> M["Final PR"]
-```
+**Goal**: Understand what needs to be built
 
-### Validation Phase (CRITICAL)
+Initial request: $ARGUMENTS
 
-**Every Gemini review MUST be validated by Claude before acting.**
+**Actions**:
+1. Create todo list with all phases
+2. If feature unclear, ask user for:
+   - What problem are they solving?
+   - What should the feature do?
+   - Any constraints or requirements?
+3. Summarize understanding and confirm with user
 
-```mermaid
-graph LR
-    A["Gemini Review"] --> B["Claude Validates"]
-    B --> C{Outcome}
-    C -->|ACCEPTED| D["Apply all fixes"]
-    C -->|ADJUSTED| E["Apply valid only"]
-    C -->|REJECTED| F["Re-prompt with context"]
-```
+---
 
-See `skills/dev-workflow-core/workflow/review-validation.md` for validation criteria.
+## Phase 2: Codebase Exploration
 
-## Phases
+**Goal**: Understand relevant existing code and patterns at both high and low levels
 
-### Phase 0: Project Detection
+**Actions**:
+1. Launch 2-3 code-explorer agents in parallel. Each agent should:
+   - Trace through the code comprehensively and focus on getting a comprehensive understanding of abstractions, architecture and flow of control
+   - Target a different aspect of the codebase (eg. similar features, high level understanding, architectural understanding, user experience, etc)
+   - Include a list of 5-10 key files to read
 
-Detect or use cached project type:
-- clean-arch, cli, ml-package, python-lib, script
-- Load appropriate architect persona
+   **Example agent prompts**:
+   - "Find features similar to [feature] and trace through their implementation comprehensively"
+   - "Map the architecture and abstractions for [feature area], tracing through the code comprehensively"
+   - "Analyze the current implementation of [existing feature/area], tracing through the code comprehensively"
+   - "Identify UI patterns, testing approaches, or extension points relevant to [feature]"
 
-### Phase 1: Intent Verification
+2. Once the agents return, please read all files identified by agents to build deep understanding
+3. Present comprehensive summary of findings and patterns discovered
 
-**Before any spec creation**, present:
+---
 
-```markdown
-## Intent Summary
+## Phase 3: Clarifying Questions
 
-**Goal**: [1 sentence]
+**Goal**: Fill in gaps and resolve all ambiguities before designing
 
-**Scope**:
-- In: [items]
-- Out: [items]
+**CRITICAL**: This is one of the most important phases. DO NOT SKIP.
 
-**Key Changes**:
-1. [change 1]
-2. [change 2]
+**Actions**:
+1. Review the codebase findings and original feature request
+2. Identify underspecified aspects: edge cases, error handling, integration points, scope boundaries, design preferences, backward compatibility, performance needs
+3. **Present all questions to the user in a clear, organized list**
+4. **Wait for answers before proceeding to architecture design**
 
-**Confirm?** [Yes proceeds / No clarifies]
-```
+If the user says "whatever you think is best", provide your recommendation and get explicit confirmation.
 
-### Phase 2: Specification (spec.md, research.md)
+---
 
-After intent confirmed:
+## Phase 4: Architecture Design
 
-```
-specs/<NNN>-<feature-name>/
-├── spec.md          # Requirements, user stories
-└── research.md      # Tech decisions, rationale
-```
+**Goal**: Design multiple implementation approaches with different trade-offs
 
-**Review**: Gemini → Claude validates → Fix (max 3 iterations)
+**Actions**:
+1. Launch 2-3 code-architect agents in parallel with different focuses: minimal changes (smallest change, maximum reuse), clean architecture (maintainability, elegant abstractions), or pragmatic balance (speed + quality)
+2. Review all approaches and form your opinion on which fits best for this specific task (consider: small fix vs large feature, urgency, complexity, team context)
+3. Present to user: brief summary of each approach, trade-offs comparison, **your recommendation with reasoning**, concrete implementation differences
+4. **Ask user which approach they prefer**
 
-### Phase 3: Design (plan.md, data-model.md)
+---
 
-```
-specs/<NNN>-<feature-name>/
-├── plan.md          # Architecture, project structure
-└── data-model.md    # Entities, schema
-```
+## Phase 5: Implementation
 
-**Review**: Gemini → Claude validates → Fix (max 3 iterations)
+**Goal**: Build the feature
 
-**Interactive mode**: Pause here for strategic decisions
+**DO NOT START WITHOUT USER APPROVAL**
 
-### Phase 4: Task Breakdown (tasks.md)
+**Actions**:
+1. Wait for explicit user approval
+2. Read all relevant files identified in previous phases
+3. Implement following chosen architecture
+4. Follow codebase conventions strictly
+5. Write clean, well-documented code
+6. Update todos as you progress
 
-```
-specs/<NNN>-<feature-name>/
-└── tasks.md         # Ordered task list with [P] and [USn] markers
-```
+---
 
-**Review**: Gemini → Claude validates → Fix (max 3 iterations)
+## Phase 6: Quality Review
 
-### Phase 5: Implementation
+**Goal**: Ensure code is simple, DRY, elegant, easy to read, and functionally correct
 
-```python
-for task in tasks:
-    if task.files > 2:
-        route_to_codex(task)
-    else:
-        route_to_language_expert(task)
+**Actions**:
+1. Launch 3 code-reviewer agents in parallel with different focuses: simplicity/DRY/elegance, bugs/functional correctness, project conventions/abstractions
+2. Consolidate findings and identify highest severity issues that you recommend fixing
+3. **Present findings to user and ask what they want to do** (fix now, fix later, or proceed as-is)
+4. Address issues based on user decision
 
-    run_tests()
-    gemini_review()
+---
 
-    if user_story_complete:
-        git_commit()
-```
+## Phase 7: Summary
 
-**TDD Cycle**: Red → Green → Refactor
+**Goal**: Document what was accomplished
 
-### Phase 6: Completion
+**Actions**:
+1. Mark all todos complete
+2. Summarize:
+   - What was built
+   - Key decisions made
+   - Files modified
+   - Suggested next steps
 
-```bash
-git push origin <branch>
-gh pr create --title "feat(<scope>): <description>"
-```
-
-## Interactive Mode
-
-With `--interactive`, pause after:
-- Intent Summary (always)
-- spec.md creation
-- plan.md creation
-- tasks.md creation
-
-```
-/feat --interactive "Add caching layer"
-
-> Intent Summary presented...
-> [Confirm to continue]
-
-> spec.md created...
-> [Review and confirm to continue]
-
-> plan.md created...
-> [Review and confirm to continue]
-...
-```
-
-## Spec Numbering
-
-Auto-increment from existing specs:
-
-```python
-def get_next_spec_number():
-    existing = glob("specs/*/")
-    numbers = [int(d.split("-")[0]) for d in existing]
-    return max(numbers, default=0) + 1
-```
-
-## Routing Rules
-
-| Condition | Route |
-|-----------|-------|
-| 3+ files affected | Codex MCP |
-| Python, 1-2 files | python-expert |
-| TypeScript, 1-2 files | typescript-expert |
-| Mixed frontend+backend | Multi-architect coordination |
-
-## Review Protocol
-
-Each phase uses:
-```
-MAX_ITERATIONS = 3
-
-while iteration < MAX_ITERATIONS:
-    review = gemini_brainstorm(documents)
-
-    if review.status == "APPROVED":
-        break
-
-    for concern in review.concerns:
-        if claude_validates(concern):
-            apply_fix(concern)
-
-    iteration += 1
-
-if iteration >= MAX_ITERATIONS:
-    escalate()
-```
-
-## Checklist
-
-- [ ] Project type detected
-- [ ] Intent confirmed by human
-- [ ] spec.md, research.md created and APPROVED
-- [ ] plan.md, data-model.md created and APPROVED
-- [ ] tasks.md created and APPROVED
-- [ ] All tasks implemented with TDD
-- [ ] All tests passing
-- [ ] PR created
-
-## Escalation
-
-Triggers /escalate if:
-- 3 iterations without APPROVED at any phase
-- Security concerns detected
-- Architectural conflict with existing code
-- User explicitly requests
+---

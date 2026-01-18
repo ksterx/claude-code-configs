@@ -49,22 +49,3 @@ uv run pytest
 ## Async
 
 Use anyio (not asyncio directly).
-
-## Formatting
-
-- Import sort: isort style
-- Docstrings: Google style
-
-Auto-fix:
-
-```bash
-ruff check --fix --select I  # import sort
-ruff format                   # formatting
-```
-
-## Detailed Guides
-
-For detailed standards, manually reference:
-- `~/.claude/skills/python-dev/guides/coding-standards.md`
-- `~/.claude/skills/python-dev/guides/architecture.md`
-- `~/.claude/skills/python-dev/guides/testing.md`

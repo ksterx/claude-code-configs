@@ -86,11 +86,3 @@ export function useUser(id: string) {
   return { user, isLoading, error };
 }
 ```
-
-## Detailed Guides
-
-For detailed standards, manually reference:
-- `~/.claude/skills/typescript-dev/guides/coding-standards.md`
-- `~/.claude/skills/typescript-dev/guides/architecture.md`
-- `~/.claude/skills/typescript-dev/guides/libraries.md`
-- `~/.claude/skills/typescript-dev/guides/testing.md`

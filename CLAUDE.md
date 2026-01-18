@@ -1,183 +1,37 @@
-# CLAUDE.md - Global Configuration
+# CLAUDE.md
 
-## Core Principles
+## General Principles
 
 1. **Autonomous Operation** - Proceed automatically, no status reports
 2. **Lightweight Orchestration** - Delegate to subagents, preserve main context
-3. **Role Delegation** - Complex (3+ files) → Codex, Simple (1-2 files) → Expert subagent
-4. **Auto-Routing** - Automatically select /feat or /patch based on scope
-5. **Profile Awareness** - Detect and display project profile at task start
-6. **Risk-Based Review** - /feat → 3 parallel reviewers, /patch → single Claude subagent
-7. **Auto-Fix with Retest** - Fix issues automatically, validate with tests and re-review
-8. **Confidence Filtering** - Only report issues with ≥80% confidence
-
-> **Details**: See `skills/dev-workflow-core/SKILL.md` for workflow tracks, agent roles, and review modes.
+3. **Role Delegation** - Use appropriate subagents for tasks
 
 ---
 
-## Auto-Routing
+## Task Routing
 
-Automatic track selection on task receipt:
+### Development Tasks
 
-```
-if is_exploration(task):       → /explore
-elif estimated_files <= 2:     → /patch
-else:                          → /feat
-```
+For coding, implementation, bug fixes, and feature development:
 
-Display profile and auto-proceed:
+→ **Use `dev-workflow` skill**
 
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Profile: clean-arch
-├─ Structure: domain/ → application/ → infra/
-├─ Rules: Dependencies flow inward only
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Track: /feat (3+ files expected)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Triggers:
+- Code implementation requests
+- Bug fixes
+- Feature requests
+- Refactoring tasks
+- Code review requests
 ```
 
----
+### Non-Development Tasks
 
-## Subagent Delegation
-
-Delegate implementation and investigation to subagents to preserve main context.
-
-### Investigation
-
-Use the **general-purpose** subagent with analyst role:
-
-> "Investigate {target} using Codex and Gemini. Answer: {questions}. Output an Investigation Report."
-
-See `agents/analyst.md` for output format.
-
-### Implementation
-
-**Complex (3+ files)**: Use **general-purpose** subagent with implementer role:
-
-> "Implement {task} following {profile} profile rules. Use Codex MCP. Follow TDD."
-
-**Simple (1-2 files)**: Use **python-expert** or **typescript-expert** subagent:
-
-> "Implement {task} following {profile} profile. TDD required."
-
-See `agents/implementer.md` for details.
-
-### Review (3 Parallel)
-
-Launch 3 subagents simultaneously with different focuses:
-
-1. **Simplicity Focus**: "Review for DRY violations, complexity, over-engineering"
-2. **Correctness Focus**: "Review for logic errors, edge cases, error handling gaps"
-3. **Conventions Focus**: "Review for pattern violations, style inconsistencies"
-
-See `agents/reviewer.md` for full prompts.
-
----
-
-## Review Rules
-
-### /feat (Parallel Review + Auto-Fix)
-
-```
-1. Gather context (tech stack, patterns, related code)
-2. Implementation complete
-3. Launch 3 reviewer subagents in parallel
-4. Aggregate results (confidence ≥80% only)
-5. Validate each concern
-6. Auto-fix all valid issues
-7. Run tests
-8. Re-review diff only (single subagent)
-9. If new issues → rollback + escalate
-   If no issues → proceed to commit
-```
-
-**Context is mandatory**: See `skills/*/workflow/gemini-templates.md`
-
-### /patch (Light Review)
-
-```
-1. Single reviewer subagent (quality-engineer)
-2. Scope check: ≤2 files
-3. APPROVED → commit
-   NEEDS_FIX → auto-fix → retest → commit
-   ESCALATE → /feat
-```
-
-### Auto-Fix Process (Fix-Retest Cycle)
-
-```
-1. Apply fixes for all validated issues
-2. Run test suite
-3. Re-review diff only (1 subagent):
-   > "Review this diff for new issues only.
-      Original issues were: {issues}.
-      Verify fixes are correct and minimal."
-4. Decision:
-   - Tests pass + No new issues → Commit
-   - Tests fail → Rollback + Escalate
-   - New issues found → Rollback + Escalate
-```
-
-### Validation Process (CRITICAL)
-
-```
-For each review concern:
-  - Technically accurate? → If no, false positive
-  - Applies to this project? → If no, irrelevant
-  - Severity correct? → Adjust if needed
-  - Conflicts with existing patterns? → Follow project conventions
-
-Result:
-  - ACCEPTED: All valid → Auto-fix all
-  - ADJUSTED: Some invalid → Auto-fix valid only
-  - REJECTED: Most invalid → Re-review with more context
-```
-
-> **Details**: See `skills/dev-workflow-core/workflow/review-validation.md`
-
-### Escalation Triggers
-
-- Tests fail after auto-fix
-- New issues introduced by fix
-- 3 iterations without resolution
-- Security concerns
-- Architectural impact detected
-
----
-
-## Completion Notification
-
-On task completion, display summary:
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ Task Complete
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Profile: clean-arch
-Track: /feat
-
-Files: 5 changed, 2 added
-Tests: 12 passed
-Review: 3 issues auto-fixed
-Re-review: ✅ No new issues
-
-Commit: abc1234
-PR: #123 (if requested)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
----
-
-## Human Intervention
-
-**Required**: Security concerns, 3 iterations exceeded, escalation from auto-fix failure
-
-**Not Required**:
-- Intent confirmation
-- Phase transitions
-- Review decisions (auto-fix)
-- Routine commits/PRs
+Handle directly without skill routing:
+- Research and information gathering
+- Documentation questions
+- General conversation
+- Configuration and setup assistance
 
 ---
 
@@ -191,15 +45,14 @@ PR: #123 (if requested)
 
 ---
 
-## Forbidden
+## Human Intervention
 
-- Execute implementation directly (delegate to subagent)
-- Skip profile display at task start
-- Run reviews sequentially (use parallel)
-- Report low-confidence issues (<80%)
-- Include code in Codex prompts
-- Skip review entirely (light review for /patch is required)
-- Create docs without human approval
-- Skip retest after auto-fix
-- Use /patch for 3+ file changes
-- **Call Gemini without project context** (tech stack, patterns, conventions)
+**Required**:
+- Security concerns
+- Ambiguous requirements
+- Decisions with significant impact
+
+**Not Required**:
+- Routine task execution
+- Phase transitions in workflows
+- Standard commits/PRs
