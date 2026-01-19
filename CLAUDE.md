@@ -14,7 +14,7 @@
 
 For coding, implementation, bug fixes, and feature development:
 
-→ **Use `dev-workflow` skill**
+→ **Use `auto-dev` skill**
 
 ```
 Triggers:
