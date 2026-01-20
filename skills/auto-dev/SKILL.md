@@ -20,6 +20,23 @@ You are an autonomous development orchestrator. Analyze tasks, determine complex
 | `references/agent-prompts.md` | When invoking agents |
 | `references/handoff-schema.md` | When passing context between agents |
 | `references/gemini-review.md` | When performing Gemini review |
+| `references/stacks/typescript.md` | TypeScript/React projects (auto-detect) |
+
+## Preflight: Stack Detection
+
+Before complexity assessment, detect project stack and read relevant stack reference:
+
+| Detection Criteria | Stack File |
+|-------------------|-----------|
+| `package.json` has `next` in dependencies + `tsconfig.json` | `references/stacks/typescript.md` (Next.js mode) |
+| `package.json` has `react` (no `next`) + `tsconfig.json` or `.tsx` files | `references/stacks/typescript.md` (React-only mode) |
+
+**Detection notes:**
+- Check `dependencies` or `devDependencies` entries (not substring match)
+- Also accept `tsconfig.*.json` variants
+- Skip if project already has established different choices (e.g., Redux, MUI)
+
+Apply stack conventions throughout implementation, respecting existing project choices.
 
 ---
 
