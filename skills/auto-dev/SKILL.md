@@ -210,9 +210,13 @@ Create a git commit after completing each implementation task (not at the end). 
 
 ### Handoff to implementer
 
-Include `test_approach` in the handoff to implementer subagent:
-- `test_approach: "tdd"` — write tests first, then implement
-- `test_approach: "post"` — implement first, then write tests
+Before handing off, convert each task into a verifiable goal:
+- "Add auth middleware" → "Write test that unauthenticated request returns 401, then implement middleware"
+- "Fix pagination bug" → "Write test reproducing the off-by-one, then fix"
+
+Include in the handoff:
+- `test_approach: "tdd"` or `"post"`
+- `goal: "[verifiable success criterion]"`
 
 ### Subagent prompt discipline
 

@@ -1,6 +1,15 @@
 # CLAUDE.md
 
-## General Principles
+## How to Think
+
+- **Don't assume. Don't hide confusion. Surface tradeoffs.** If uncertain, ask. If multiple interpretations exist, present them — don't pick silently.
+- **Simplicity first.** Minimum code that solves the problem. No speculative features, no abstractions for single-use code. "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+- **Surgical changes.** Every changed line should trace directly to the user's request. Don't "improve" adjacent code. Match existing style.
+- **Goal-driven execution.** Transform tasks into verifiable goals before implementing. "Add validation" → "Write tests for invalid inputs, then make them pass." Strong success criteria let you loop independently.
+
+---
+
+## Operational Principles
 
 1. **Autonomous Operation** - Proceed automatically, no status reports
 2. **Lightweight Orchestration** - Delegate to subagents, preserve main context
