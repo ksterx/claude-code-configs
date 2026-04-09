@@ -25,60 +25,52 @@ TaskCreate: [AUTO-DEV] {feature}: Review & fix (Launch code-reviewer subagent)
 
 ### Standard
 
+Consolidated to 8 tasks (reliability: 12 steps at 95% = 54%, 8 steps at 95% = 66%).
+
 ```
+TaskCreate: [AUTO-DEV] {feature}: Discovery (clarify requirements)
 TaskCreate: [AUTO-DEV] {feature}: Explore codebase (Launch code-explorer subagent)
-TaskCreate: [AUTO-DEV] {feature}: Write spec.md (Launch code-architect subagent)
-TaskCreate: [AUTO-DEV] {feature}: Gemini review spec
-TaskCreate: [AUTO-DEV] {feature}: Human approval spec
-TaskCreate: [AUTO-DEV] {feature}: Write plan.md (Launch code-architect subagent)
-TaskCreate: [AUTO-DEV] {feature}: Gemini review plan
-TaskCreate: [AUTO-DEV] {feature}: Human approval plan
-TaskCreate: [AUTO-DEV] {feature}: Write tasks.md (Launch code-architect subagent)
-TaskCreate: [AUTO-DEV] {feature}: Gemini review tasks
-TaskCreate: [AUTO-DEV] {feature}: Human approval tasks
-TaskCreate: [AUTO-DEV] {feature}: Implement (Launch code-implementer subagent)
-TaskCreate: [AUTO-DEV] {feature}: Spec compliance review (Launch code-reviewer subagent)
-TaskCreate: [AUTO-DEV] {feature}: Final review & fix (Launch code-reviewer subagent)
-TaskCreate: [AUTO-DEV] {feature}: Human final approval
+TaskCreate: [AUTO-DEV] {feature}: Write & review spec.md (architect → reviewer → Codex async)
+TaskCreate: [AUTO-DEV] {feature}: Write & review plan.md (architect → reviewer → Codex async)
+TaskCreate: [AUTO-DEV] {feature}: Write & review tasks.md (architect → reviewer → Codex async)
+TaskCreate: [AUTO-DEV] {feature}: Implement + tests PASS (Launch code-implementer → git commit per task)
+TaskCreate: [AUTO-DEV] {feature}: Post-impl review (reviewer + Codex async)
+TaskCreate: [AUTO-DEV] {feature}: Final review & fix (spec-compliance + standard → auto-fix)
 ```
 
 ### Complex
 
 ```
+TaskCreate: [AUTO-DEV] {feature}: Discovery (clarify requirements, challenge assumptions)
+
 TaskCreate: [AUTO-DEV] {feature}: Explore codebase (Launch code-explorer subagents)
   metadata: { "agent": "code-explorer", "scopes": ["entry", "data", "cross-cutting"], "parallel": true }
 
-TaskCreate: [AUTO-DEV] {feature}: Gemini review exploration
-
-TaskCreate: [AUTO-DEV] {feature}: Human review requirements
+TaskCreate: [AUTO-DEV] {feature}: Subagent review exploration
 
 TaskCreate: [AUTO-DEV] {feature}: Write spec.md (Launch code-architect subagent)
 
-TaskCreate: [AUTO-DEV] {feature}: Gemini review spec
-
-TaskCreate: [AUTO-DEV] {feature}: Human approval spec
+TaskCreate: [AUTO-DEV] {feature}: Review spec (subagent + Codex async)
 
 TaskCreate: [AUTO-DEV] {feature}: Write plan.md approaches (Launch code-architect subagents)
   metadata: { "agent": "code-architect", "scopes": ["minimal", "clean", "pragmatic"], "parallel": true }
 
-TaskCreate: [AUTO-DEV] {feature}: Gemini review plans
-
-TaskCreate: [AUTO-DEV] {feature}: Human choose & approval plan
+TaskCreate: [AUTO-DEV] {feature}: Review plans (subagent + Codex async)
 
 TaskCreate: [AUTO-DEV] {feature}: Write tasks.md (Launch code-architect subagent)
 
-TaskCreate: [AUTO-DEV] {feature}: Gemini review tasks
-
-TaskCreate: [AUTO-DEV] {feature}: Human approval tasks
+TaskCreate: [AUTO-DEV] {feature}: Review tasks (subagent + Codex async)
 
 TaskCreate: [AUTO-DEV] {feature}: Implement phase N (Launch code-implementer subagent)
+
+TaskCreate: [AUTO-DEV] {feature}: Post-impl review (subagent + Codex async)
 
 TaskCreate: [AUTO-DEV] {feature}: Spec compliance review (Launch code-reviewer subagent)
 
 TaskCreate: [AUTO-DEV] {feature}: Final review (Launch code-reviewer subagents)
   metadata: { "agent": "code-reviewer", "scopes": ["bugs", "quality", "conventions"], "parallel": true }
 
-TaskCreate: [AUTO-DEV] {feature}: Auto-fix & human final approval
+TaskCreate: [AUTO-DEV] {feature}: Auto-fix & complete
 ```
 
 ---
@@ -92,7 +84,7 @@ TaskCreate: [AUTO-DEV] {feature}: Auto-fix & human final approval
 Examples:
 - `[AUTO-DEV] user-auth: Explore codebase (Launch code-explorer subagent)`
 - `[AUTO-DEV] user-auth: Write spec.md (Launch code-architect subagent)`
-- `[AUTO-DEV] user-auth: Gemini review spec`
+- `[AUTO-DEV] user-auth: Review spec (subagent + Codex → Claude validates)`
 - `[AUTO-DEV] user-auth: Human approval spec`
 - `[AUTO-DEV] user-auth: Implement 1/5 - Create auth service (Launch code-implementer subagent)`
 
@@ -189,22 +181,14 @@ TaskCreate({
 ## Example: Standard Workflow Task Flow
 
 ```
-[1] Explore codebase (Launch code-explorer subagent)           in_progress → completed
-[2] Write spec.md (Launch code-architect subagent)             pending → in_progress → completed
-[3] Gemini review spec                                         pending → in_progress → completed
-[4] Human approval spec                                        pending → in_progress (awaiting) → completed
-[5] Write plan.md (Launch code-architect subagent)             pending → in_progress → completed
-[6] Gemini review plan                                         pending → in_progress → completed
-[7] Human approval plan                                        pending → in_progress (awaiting) → completed
-[8] Write tasks.md (Launch code-architect subagent)            pending → in_progress → completed
-[9] Gemini review tasks                                        pending → in_progress → completed
-[10] Human approval tasks                                      pending → in_progress (awaiting) → completed
-[11] Implement 1/3 (Launch code-implementer subagent)          pending → in_progress → completed
-[12] Implement 2/3 (Launch code-implementer subagent)          pending → in_progress → completed
-[13] Implement 3/3 (Launch code-implementer subagent)          pending → in_progress → completed
-[14] Spec compliance review (Launch code-reviewer subagent)    pending → in_progress → completed
-[15] Final review & fix (Launch code-reviewer subagent)        pending → in_progress → completed
-[16] Human final approval                                      pending → in_progress (awaiting) → completed
+[1] Discovery (clarify requirements)                                 in_progress → completed
+[2] Explore codebase (code-explorer)                                 pending → in_progress → completed
+[3] Write & review spec.md (architect → reviewer → Codex async)      pending → in_progress → completed
+[4] Write & review plan.md (architect → reviewer → Codex async)      pending → in_progress → completed
+[5] Write & review tasks.md (architect → reviewer → Codex async)     pending → in_progress → completed
+[6] Implement + tests PASS (implementer → git commit per task)       pending → in_progress → completed
+[7] Post-impl review (reviewer + Codex async)                        pending → in_progress → completed
+[8] Final review & fix (spec-compliance + standard → auto-fix)       pending → in_progress → completed
 ```
 
 ---

@@ -12,18 +12,22 @@
 
 ### Development Tasks
 
-For coding, implementation, bug fixes, and feature development:
+**Use `auto-dev` skill** when task involves:
+- Multiple files to modify
+- Architecture or design decisions
+- Non-trivial debugging (root cause unclear)
+- New feature implementation
+- Refactoring across components
 
-→ **Use `auto-dev` skill**
+**Handle directly** (no skill needed):
+- Single-file, few-line fixes
+- Obvious typos or syntax errors
+- Simple config changes
+- Clear one-liner bugs
 
-```
-Triggers:
-- Code implementation requests
-- Bug fixes
-- Feature requests
-- Refactoring tasks
-- Code review requests
-```
+**Judgment criteria**:
+- If you need to explore the codebase → use `auto-dev`
+- If the fix is immediately obvious → handle directly
 
 ### Non-Development Tasks
 
@@ -32,6 +36,16 @@ Handle directly without skill routing:
 - Documentation questions
 - General conversation
 - Configuration and setup assistance
+
+---
+
+## Code Review
+
+**Subagent review is required for Simple+ complexity changes.**
+
+**Implementation complete ≠ workflow complete.** You MUST NOT produce a completion summary until the review loop has executed. See `skills/auto-dev/SKILL.md` "Review Gate Rules" for the full protocol.
+
+The reviewer subagent is a second opinion, not an authority. You are responsible for the final judgment.
 
 ---
 
@@ -47,12 +61,16 @@ Handle directly without skill routing:
 
 ## Human Intervention
 
-**Required**:
-- Security concerns
-- Ambiguous requirements
-- Decisions with significant impact
+**Upfront (Discovery phase)**:
+- Ask clarifying questions to understand the user's true intent
+- Challenge assumptions — the user may request a solution based on incomplete knowledge
+- Propose better alternatives when they exist
 
-**Not Required**:
-- Routine task execution
-- Phase transitions in workflows
+**During development — ask when**:
+- A decision would significantly change the final output's behavior
+- Security implications need human judgment
+
+**Do NOT stop for**:
+- Phase transitions or approval gates
+- Routine review cycles
 - Standard commits/PRs

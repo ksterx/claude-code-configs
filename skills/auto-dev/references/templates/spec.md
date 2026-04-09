@@ -1,5 +1,10 @@
 # Spec: {Feature Name}
 
+## User Intent
+- **Goal**: [What the user actually needs — the outcome, not the mechanism]
+- **Why**: [The underlying problem or motivation driving this request]
+- **Why this approach**: [Why this solution over alternatives. What constraints led here?]
+
 ## Overview
 [1-2 sentence description of the feature]
 
